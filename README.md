@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Projeto Cultura Fácil
 
 Este projeto visa desenvolver uma plataforma SaaS para conectar agentes culturais a editais de fomento à cultura no Ceará.
@@ -15,8 +14,5 @@ O objetivo é solucionar dois gargalos principais da plataforma existente (Mapa 
 A interface do usuário será desenvolvida com as seguintes tecnologias e princípios:
 
 *   **Filosofia de Design:** Minimalismo Funcional, com foco na simplicidade, usabilidade e velocidade.
-*   **Framework Principal:** [React](https.reactjs.org/) com [Vite](https://vitejs.dev/) para um desenvolvimento rápido e builds otimizadas.
+*   **Framework Principal:** [React](https://reactjs.org/) com [Vite](https://vitejs.dev/) para um desenvolvimento rápido e builds otimizadas.
 *   **Estilização:** [Tailwind CSS](https://tailwindcss.com/) para criar um design customizado, responsivo e com arquivos de estilo extremamente leves.
-=======
-# culturafacil
->>>>>>> b1133413d028c6ebedfae5e9b34e66b4d3b51a8d
