@@ -25,3 +25,6 @@ Thumbs.db
 
 # Deployment scripts
 deploy.ps1
+
+# Project Summary (local only)
+PROJECT_SUMMARY.md
