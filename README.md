@@ -2,8 +2,7 @@
 
 ## Plataforma SaaS de Gestão Cultural
 
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Status](https://img.shields.io/badge/Status-Em%20Desenvolvimento-orange.svg)](https://github.com/thassito/culturafacil)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/thassito/culturafacil)
 
 ## 🚀 Visão Geral do Projeto
 
@@ -37,48 +36,13 @@ Este projeto nasce da necessidade de uma ferramenta intuitiva, acessível e resp
     *   [Git](https://git-scm.com/) - Sistema de controle de versão.
     *   [GitHub](https://github.com/) - Hospedagem de repositórios Git.
 
-## 🚀 Como Começar
-
-Siga estes passos para ter o projeto rodando localmente:
-
-1.  **Clone o Repositório:**
-    ```bash
-    git clone https://github.com/thassito/culturafacil.git
-    cd culturafacil
-    ```
-
-2.  **Instale as Dependências:**
-    ```bash
-    cd frontend
-    npm install
-    ```
-
-3.  **Inicie o Servidor de Desenvolvimento:**
-    ```bash
-    npm run dev
-    ```
-    O aplicativo estará disponível em `http://localhost:5173` (ou outra porta disponível).
-
 ## 📸 Screenshots (Em breve)
 
 Esta seção será atualizada com capturas de tela e GIFs do projeto em funcionamento.
 
-## 🌐 Deploy para Produção
-
-Para fazer o deploy da versão frontend para a VPS de produção:
-
-1.  Navegue até a raiz do projeto.
-2.  Execute o script PowerShell:
-    ```powershell
-    ./deploy.ps1
-    ```
-    Este script fará o build do projeto e copiará os arquivos para `root@195.35.16.32:/var/www/culturafacil.com.br`.
-    *   **Observação:** Certifique-se de que o `scp` esteja configurado e que você tenha as credenciais de acesso à VPS.
-
 ## 📜 Licença
 
-Este projeto está licenciado sob a Licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+Este projeto está licenciado sob a Licença MIT.
 
 ---
 Desenvolvido com ❤️ por [Thàssitto Gàspar](https://www.linkedin.com/in/thassito/).
-```
