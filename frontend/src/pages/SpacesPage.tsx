@@ -1,0 +1,55 @@
+import React from 'react';
+import SpaceCard from '../components/SpaceCard'; // We will create this component next
+
+// Placeholder data for cultural spaces
+const spaces = [
+  { id: 1, name: 'Theatro José de Alencar', type: 'Teatro', address: 'Fortaleza, CE' },
+  { id: 2, name: 'Dragão do Mar', type: 'Centro Cultural', address: 'Fortaleza, CE' },
+  { id: 3, name: 'Museu da Imagem e do Som', type: 'Museu', address: 'Fortaleza, CE' },
+  { id: 4, name: 'Cineteatro São Luiz', type: 'Cinema / Teatro', address: 'Fortaleza, CE' },
+  { id: 5, name: 'Estação das Artes', type: 'Complexo Cultural', address: 'Fortaleza, CE' },
+];
+
+function SpacesPage() {
+  return (
+    <div className="flex flex-col md:flex-row min-h-screen bg-gray-900 text-white font-sans">
+      {/* Map Area Placeholder */}
+      <div className="w-full md:w-2/3 h-64 md:h-screen bg-gray-800 flex items-center justify-center relative">
+        <div className="text-center">
+          <h2 className="text-4xl font-bold text-gray-500">Mapa de Espaços</h2>
+          <p className="text-gray-600">(Visualização do mapa aparecerá aqui)</p>
+        </div>
+        <div className="absolute bottom-4 right-4 flex flex-col space-y-2">
+          <button className="w-10 h-10 bg-gray-900/50 backdrop-blur-md rounded-full text-xl font-bold hover:bg-gray-700/50">+</button>
+          <button className="w-10 h-10 bg-gray-900/50 backdrop-blur-md rounded-full text-xl font-bold hover:bg-gray-700/50">-</button>
+        </div>
+      </div>
+
+      {/* Spaces List Area */}
+      <div className="w-1/3 bg-gray-900 p-6 overflow-y-auto">
+        <h1 className="text-3xl font-bold mb-4">Espaços Culturais</h1>
+        
+        <div className="mb-6 sticky top-0 bg-gray-900 py-4">
+          <input
+            type="text"
+            placeholder="Buscar por nome do espaço..."
+            className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <div className="mt-2">
+            <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-semibold">
+              Filtrar
+            </button>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          {spaces.map(space => (
+            <SpaceCard key={space.id} space={space} />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default SpacesPage;
