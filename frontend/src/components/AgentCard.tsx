@@ -14,19 +14,19 @@ interface AgentCardProps {
 
 const AgentCard: React.FC<AgentCardProps> = ({ agent }) => {
   return (
-    <div className="bg-gray-800/50 backdrop-blur-md rounded-lg border border-gray-700/50 p-4 flex items-center space-x-4 hover:border-blue-500 transition-colors duration-300">
+    <div className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-md rounded-lg border border-gray-200 dark:border-gray-700/50 p-4 flex items-center space-x-4 hover:border-blue-500 transition-colors duration-300">
       {/* Avatar Placeholder */}
-      <div className="w-16 h-16 bg-gray-700 rounded-full flex-shrink-0">
+      <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-full flex-shrink-0">
         {/* Placeholder for an image */}
       </div>
       <div className="flex-1">
-        <h3 className="text-lg font-bold text-white truncate" title={agent.name}>{agent.name}</h3>
-        <span className="px-2 py-1 mt-1 inline-block bg-green-600/50 text-green-200 text-xs font-semibold rounded-full">
+        <h3 className="text-lg font-bold text-gray-900 dark:text-white truncate" title={agent.name}>{agent.name}</h3>
+        <span className="px-2 py-1 mt-1 inline-block bg-green-500/50 dark:bg-green-600/50 text-green-800 dark:text-green-200 text-xs font-semibold rounded-full">
           {agent.area}
         </span>
-        <p className="text-sm text-gray-400 mt-1 truncate">{agent.location}</p>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 truncate">{agent.location}</p>
       </div>
-       <button className="text-sm font-semibold text-blue-400 hover:text-blue-300 self-start">
+       <button className="text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 self-start">
         &rarr;
       </button>
     </div>

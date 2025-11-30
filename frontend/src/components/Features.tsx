@@ -50,8 +50,8 @@ function Features() {
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div className="text-center mb-12" variants={itemVariants}>
-          <h3 className="text-3xl font-bold text-white">Feito para facilitar sua vida</h3>
-          <p className="text-lg text-gray-300 mt-2">Menos tempo com burocracia, mais tempo para criar.</p>
+          <h3 className="text-3xl font-bold text-gray-900 dark:text-white">Feito para facilitar sua vida</h3>
+          <p className="text-lg text-gray-600 dark:text-gray-300 mt-2">Menos tempo com burocracia, mais tempo para criar.</p>
         </motion.div>
         <motion.div 
           className="grid grid-cols-1 md:grid-cols-3 gap-8"
@@ -62,14 +62,14 @@ function Features() {
             return (
               <motion.div 
                 key={feature.name} 
-                className="bg-gray-800/20 backdrop-blur-xl p-8 rounded-2xl shadow-lg border border-gray-600/50"
+                className="bg-gray-100/50 dark:bg-gray-800/20 backdrop-blur-xl p-8 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700/50"
                 variants={itemVariants}
               >
                 <div className="w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center mb-4">
-                  <Icon className="w-8 h-8 text-blue-300" />
+                  <Icon className="w-8 h-8 text-blue-600 dark:text-blue-300" />
                 </div>
-                <h4 className="text-xl font-semibold text-white">{feature.name}</h4>
-                <p className="mt-2 text-gray-300">{feature.description}</p>
+                <h4 className="text-xl font-semibold text-gray-900 dark:text-white">{feature.name}</h4>
+                <p className="mt-2 text-gray-600 dark:text-gray-300">{feature.description}</p>
               </motion.div>
             );
           })}

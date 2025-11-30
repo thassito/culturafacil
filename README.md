@@ -19,9 +19,10 @@ Este projeto nasce da necessidade de uma ferramenta intuitiva, acessível e resp
 *   **Listagem de Projetos:** Visibilidade para projetos culturais em andamento.
 *   **Listagem de Oportunidades:** Centralização de editais e chamadas públicas para fomento.
 *   **Autenticação de Agentes:** Páginas de Login e Cadastro (simuladas).
-*   **Painel Administrativo:** Área protegida para gestão e configuração do SaaS (com login simulado).
+*   **Painel Administrativo:** Área protegida para gestão e configuração do SaaS (com login simulado) e dashboard interativo.
 *   **Design Responsivo:** Otimizado para funcionar em qualquer dispositivo (mobile, tablet, desktop).
 *   **Experiência de Usuário Moderna:** Design inspirado na estética da Apple, com efeitos de glassmorphism e animações sutis.
+*   **Alternância de Tema Inteligente:** Suporte a tema claro e escuro, adaptando-se automaticamente às preferências do sistema do usuário.
 
 ## 🛠️ Tecnologias Utilizadas
 
@@ -45,4 +46,4 @@ Esta seção será atualizada com capturas de tela e GIFs do projeto em funciona
 Este projeto está licenciado sob a Licença MIT.
 
 ---
-Desenvolvido com ❤️ por [Thàssitto Gàspar](https://www.linkedin.com/in/thassito/).
+Desenvolvido com ❤️ por [Thàssitto Gàspar](https://www.linkedin.com/in/thassito/) e seu assistente Gemini.

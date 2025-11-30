@@ -6,7 +6,7 @@ import Footer from '../components/Footer';
 
 function HomePage() {
   return (
-    <div className="font-sans bg-gray-900 text-gray-200">
+    <div className="font-sans bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200">
       <Header />
       <main>
         <Hero />
