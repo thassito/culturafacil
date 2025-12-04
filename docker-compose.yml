@@ -1,0 +1,89 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: cf-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: culturafacil
+      POSTGRES_USER: culturafacil
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-CulturaFacil2025!}
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U culturafacil"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - cf-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: cf-redis
+    restart: always
+    command: redis-server --appendonly yes
+    volumes:
+      - ./data/redis:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - cf-network
+
+  backend:
+    build:
+      context: ./apps/backend
+      dockerfile: Dockerfile
+    container_name: cf-backend
+    restart: always
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://culturafacil:${DB_PASSWORD:-CulturaFacil2025!}@postgres:5432/culturafacil
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: ${JWT_SECRET:-cultura-facil-jwt-secret-2025}
+      JWT_EXPIRATION: 86400
+      API_PORT: 3000
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - cf-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/v1/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  frontend:
+    build:
+      context: ./apps/frontend
+      dockerfile: Dockerfile
+    container_name: cf-frontend
+    restart: always
+    ports:
+      - "3001:80"
+    depends_on:
+      - backend
+    networks:
+      - cf-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  cf-network:
+    driver: bridge
