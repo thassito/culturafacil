@@ -28,3 +28,11 @@ deploy.ps1
 
 # Project Summary (local only)
 PROJECT_SUMMARY.md
+.env
+.env.local
+.env.*.local
+node_modules/
+dist/
+build/
+*.log
+.DS_Store
