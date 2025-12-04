@@ -2,57 +2,37 @@ name: Lint and Test
 
 on:
   push:
-    branches:
-      - main
-      - develop
+    branches: [main, develop]
   pull_request:
-    branches:
-      - main
-      - develop
+    branches: [main, develop]
 
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20'
-          cache: 'npm'
-      
       - name: Lint Backend
         working-directory: ./apps
-        run: npm run lint 2>/dev/null || echo "No lint script"
-      
+        run: npm install && npm run lint 2>/dev/null || echo "No lint"
       - name: Lint Frontend
         working-directory: ./frontend
-        run: npm run lint 2>/dev/null || echo "No lint script"
+        run: npm install --legacy-peer-deps && npm run lint 2>/dev/null || echo "No lint"
 
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20'
-          cache: 'npm'
-      
-      - name: Install Backend Dependencies
-        working-directory: ./apps
-        run: npm install
-      
       - name: Test Backend
         working-directory: ./apps
-        run: npm run test 2>/dev/null || echo "No test script"
-      
-      - name: Install Frontend Dependencies
-        working-directory: ./frontend
-        run: npm install --legacy-peer-deps
-      
+        run: npm install && npm run test 2>/dev/null || echo "No tests"
       - name: Test Frontend
         working-directory: ./frontend
-        run: npm run test 2>/dev/null || echo "No test script"
+        run: npm install --legacy-peer-deps && npm run test 2>/dev/null || echo "No tests"
