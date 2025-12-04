@@ -40,7 +40,7 @@ services:
 
   backend:
     build:
-      context: ./apps/backend
+      context: ./apps
       dockerfile: Dockerfile
     container_name: cf-backend
     restart: always
@@ -68,7 +68,7 @@ services:
 
   frontend:
     build:
-      context: ./apps/frontend
+      context: ./frontend
       dockerfile: Dockerfile
     container_name: cf-frontend
     restart: always
