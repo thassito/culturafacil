@@ -1,15 +1,50 @@
 
-import ProjectCard from '../components/ProjectCard'; // We will create this component next
-
-// Placeholder data for cultural projects
-const projects = [
-  { id: 1, name: 'Ceará Sonoro', agent: 'Instituto Seara', area: 'Música' },
-  { id: 2, name: 'Escola de Audiovisual', agent: 'Vila das Artes', area: 'Audiovisual' },
-  { id: 3, name: 'Temporada de Arte Cearense', agent: 'Dragão do Mar', area: 'Multi-linguagem' },
-  { id: 4, name: 'Circuito de Roteiros', agent: 'Porto Iracema das Artes', area: 'Cinema' },
-];
+import { useEffect, useState } from 'react';
+import ProjectCard from '../components/ProjectCard';
 
 function ProjectsPage() {
+  const [projects, setProjects] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        // NOTE: Currently fetching from /opportunities. A dedicated /projects endpoint might be needed.
+        const response = await fetch('https://api.culturafacil.com.br/opportunities'); 
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        // Assuming projects might be filtered from opportunities, or opportunities contains project data.
+        // Further refinement may be needed based on actual API response structure for projects.
+        setProjects(data); 
+      } catch (e: any) {
+        setError(e.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white">
+        Carregando projetos...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900 text-red-500">
+        Erro ao carregar projetos: {error}
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white font-sans">
       {/* Map Area Placeholder */}
@@ -42,9 +77,13 @@ function ProjectsPage() {
         </div>
 
         <div className="space-y-4">
-          {projects.map(project => (
-            <ProjectCard key={project.id} project={project} />
-          ))}
+          {projects.length > 0 ? (
+            projects.map(project => (
+              <ProjectCard key={project.id} project={project} />
+            ))
+          ) : (
+            <p className="text-gray-500 dark:text-gray-400">Nenhum projeto encontrado.</p>
+          )}
         </div>
       </div>
     </div>

@@ -1,16 +1,47 @@
 
-import AgentCard from '../components/AgentCard'; // We will create this component next
-
-// Placeholder data for cultural agents
-const agents = [
-  { id: 1, name: 'Coletivo As Travestidas', area: 'Artes Cênicas', location: 'Fortaleza, CE' },
-  { id: 2, name: 'Maracatu Solar', area: 'Cultura Popular', location: 'Fortaleza, CE' },
-  { id: 3, name: 'Lia de Itamaracá', area: 'Música', location: 'Recife, PE' }, // Example from outside CE
-  { id: 4, name: 'Gero Camilo', area: 'Cinema / Teatro', location: 'Fortaleza, CE' },
-  { id: 5, name: 'Karla Karenina', area: 'Teatro / Humor', location: 'Fortaleza, CE' },
-];
+import { useEffect, useState } from 'react';
+import AgentCard from '../components/AgentCard';
 
 function AgentsPage() {
+  const [agents, setAgents] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchAgents = async () => {
+      try {
+        const response = await fetch('https://api.culturafacil.com.br/agents');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setAgents(data);
+      } catch (e: any) {
+        setError(e.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAgents();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white">
+        Carregando agentes...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900 text-red-500">
+        Erro ao carregar agentes: {error}
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white font-sans">
       {/* Map Area Placeholder */}
@@ -43,9 +74,13 @@ function AgentsPage() {
         </div>
 
         <div className="space-y-4">
-          {agents.map(agent => (
-            <AgentCard key={agent.id} agent={agent} />
-          ))}
+          {agents.length > 0 ? (
+            agents.map(agent => (
+              <AgentCard key={agent.id} agent={agent} />
+            ))
+          ) : (
+            <p className="text-gray-500 dark:text-gray-400">Nenhum agente encontrado.</p>
+          )}
         </div>
       </div>
     </div>

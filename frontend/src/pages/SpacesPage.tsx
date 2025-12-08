@@ -1,16 +1,50 @@
 
-import SpaceCard from '../components/SpaceCard'; // We will create this component next
-
-// Placeholder data for cultural spaces
-const spaces = [
-  { id: 1, name: 'Theatro José de Alencar', type: 'Teatro', address: 'Fortaleza, CE' },
-  { id: 2, name: 'Dragão do Mar', type: 'Centro Cultural', address: 'Fortaleza, CE' },
-  { id: 3, name: 'Museu da Imagem e do Som', type: 'Museu', address: 'Fortaleza, CE' },
-  { id: 4, name: 'Cineteatro São Luiz', type: 'Cinema / Teatro', address: 'Fortaleza, CE' },
-  { id: 5, name: 'Estação das Artes', type: 'Complexo Cultural', address: 'Fortaleza, CE' },
-];
+import { useEffect, useState } from 'react';
+import SpaceCard from '../components/SpaceCard';
 
 function SpacesPage() {
+  const [spaces, setSpaces] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchSpaces = async () => {
+      try {
+        // NOTE: Currently fetching from /opportunities. A dedicated /spaces endpoint might be needed.
+        const response = await fetch('https://api.culturafacil.com.br/opportunities'); 
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        // Assuming spaces might be filtered from opportunities, or opportunities contains space data.
+        // Further refinement may be needed based on actual API response structure for spaces.
+        setSpaces(data); 
+      } catch (e: any) {
+        setError(e.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSpaces();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white">
+        Carregando espaços...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900 text-red-500">
+        Erro ao carregar espaços: {error}
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white font-sans">
       {/* Map Area Placeholder */}
@@ -43,9 +77,13 @@ function SpacesPage() {
         </div>
 
         <div className="space-y-4">
-          {spaces.map(space => (
-            <SpaceCard key={space.id} space={space} />
-          ))}
+          {spaces.length > 0 ? (
+            spaces.map(space => (
+              <SpaceCard key={space.id} space={space} />
+            ))
+          ) : (
+            <p className="text-gray-500 dark:text-gray-400">Nenhum espaço encontrado.</p>
+          )}
         </div>
       </div>
     </div>
