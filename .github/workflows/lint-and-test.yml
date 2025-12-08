@@ -7,32 +7,78 @@ on:
     branches: [main, develop]
 
 jobs:
-  lint:
+  lint-backend:
+    name: Lint Backend
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./apps
     steps:
       - uses: actions/checkout@v3
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20'
-      - name: Lint Backend
-        working-directory: ./apps
-        run: npm install && npm run lint 2>/dev/null || echo "No lint"
-      - name: Lint Frontend
-        working-directory: ./frontend
-        run: npm install --legacy-peer-deps && npm run lint 2>/dev/null || echo "No lint"
+          cache: 'npm'
+          cache-dependency-path: apps/package-lock.json
+      - name: Install dependencies
+        run: npm install
+      - name: Lint
+        run: npm run lint
 
-  test:
+  test-backend:
+    name: Test Backend
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./apps
     steps:
       - uses: actions/checkout@v3
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20'
-      - name: Test Backend
-        working-directory: ./apps
-        run: npm install && npm run test 2>/dev/null || echo "No tests"
-      - name: Test Frontend
+          cache: 'npm'
+          cache-dependency-path: apps/package-lock.json
+      - name: Install dependencies
+        run: npm install
+      - name: Test
+        run: npm run test
+
+  lint-frontend:
+    name: Lint Frontend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
         working-directory: ./frontend
-        run: npm install --legacy-peer-deps && npm run test 2>/dev/null || echo "No tests"
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+      - name: Lint
+        run: npm run lint
+
+  test-frontend:
+    name: Test Frontend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+      - name: Test
+        run: npm run test
