@@ -1,4 +1,4 @@
-import React from 'react';
+
 import AgentCard from '../components/AgentCard'; // We will create this component next
 
 // Placeholder data for cultural agents

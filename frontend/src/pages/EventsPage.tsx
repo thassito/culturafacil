@@ -1,4 +1,4 @@
-import React from 'react';
+
 import EventCard from '../components/EventCard';
 
 // Reverted to placeholder data

@@ -1,4 +1,4 @@
-import React from 'react';
+
 import ProjectCard from '../components/ProjectCard'; // We will create this component next
 
 // Placeholder data for cultural projects

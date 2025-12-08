@@ -1,4 +1,4 @@
-import React from 'react';
+
 import SpaceCard from '../components/SpaceCard'; // We will create this component next
 
 // Placeholder data for cultural spaces

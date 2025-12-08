@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
+import type { ReactNode } from 'react';
 
 // Define o formato dos dados do usuário (agente) e do contexto
 interface User {
@@ -6,14 +7,15 @@ interface User {
   email: string;
   // Adicione outros campos do agente que a API retorna, se necessário
   name?: string;
+  cpf?: string;
 }
 
 interface AuthContextType {
   isAuthenticated: boolean;
   user: User | null;
   token: string | null;
-  login: (email, password) => Promise<void>;
-  signup: (email, password, name, cpf) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
+  signup: (email: string, password: string, name: string, cpf: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -36,7 +38,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-  const login = async (email, password) => {
+  const login = async (email: string, password: string) => {
     const response = await fetch(`${API_URL}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -57,7 +59,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(data.agent);
   };
   
-  const signup = async (email, password, name, cpf) => {
+  const signup = async (email: string, password: string, name: string, cpf: string) => {
     const response = await fetch(`${API_URL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

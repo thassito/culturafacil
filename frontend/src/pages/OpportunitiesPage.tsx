@@ -1,4 +1,4 @@
-import React from 'react';
+
 import OpportunityCard from '../components/OpportunityCard'; // We will create this component next
 
 // Placeholder data for opportunities (editais)
