@@ -1,7 +1,11 @@
 import { Link } from 'react-router-dom';
 import { Cog6ToothIcon, HomeIcon, PlusCircleIcon, ChartBarIcon, UserGroupIcon, CalendarDaysIcon, MapPinIcon } from '@heroicons/react/24/outline';
+import { useEffect, useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
 
-const StatCard = ({ title, value, icon: Icon }: { title: string, value: string, icon: React.ElementType }) => (
+const API_URL = import.meta.env.VITE_API_URL || 'https://api.culturafacil.com.br/api/v1';
+
+const StatCard = ({ title, value, icon: Icon }: { title: string, value: string | number, icon: React.ElementType }) => (
   <div className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-md p-6 rounded-lg border border-gray-200 dark:border-gray-700/50 flex items-center space-x-4">
     <div className="bg-blue-500/10 p-3 rounded-full">
       <Icon className="h-8 w-8 text-blue-600 dark:text-blue-300" />
@@ -14,6 +18,63 @@ const StatCard = ({ title, value, icon: Icon }: { title: string, value: string, 
 );
 
 function Dashboard() {
+  const { token } = useAuth();
+  const [stats, setStats] = useState({
+    totalAgents: '...',
+    activeEvents: '...',
+    registeredProjects: '...',
+    verifiedSpaces: '...', // This one might need a dedicated endpoint or logic
+  });
+  const [loadingStats, setLoadingStats] = useState(true);
+  const [errorStats, setErrorStats] = useState(null);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      if (!token) {
+        setLoadingStats(false);
+        return;
+      }
+      setLoadingStats(true);
+      setErrorStats(null);
+      try {
+        const [agentsRes, opportunitiesRes] = await Promise.all([
+          fetch(`${API_URL}/agents`, { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch(`${API_URL}/opportunities`, { headers: { 'Authorization': `Bearer ${token}` } }),
+        ]);
+
+        const agentsData = await agentsRes.json();
+        const opportunitiesData = await opportunitiesRes.json();
+
+        if (!agentsRes.ok || !opportunitiesRes.ok) {
+          throw new Error('Failed to fetch dashboard stats');
+        }
+        
+        // Assuming activeEvents and registeredProjects are derived from opportunities
+        // For 'Espaços Verificados', we don't have an endpoint yet, so keeping placeholder
+        setStats({
+          totalAgents: agentsData.length.toLocaleString(),
+          activeEvents: opportunitiesData.filter(op => op.status === 'published' && new Date(op.registrationTo) > new Date()).length.toLocaleString(), // Simplified logic
+          registeredProjects: opportunitiesData.length.toLocaleString(), // Assuming all opportunities are projects for now
+          verifiedSpaces: 'N/A', // Placeholder
+        });
+
+      } catch (err) {
+        setErrorStats(err.message);
+        setStats({
+          totalAgents: 'Erro',
+          activeEvents: 'Erro',
+          registeredProjects: 'Erro',
+          verifiedSpaces: 'Erro',
+        });
+      } finally {
+        setLoadingStats(false);
+      }
+    };
+
+    fetchStats();
+  }, [token]);
+
+
   return (
     <>
       <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
@@ -23,10 +84,10 @@ function Dashboard() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
-        <StatCard title="Total de Agentes" value="1,254" icon={UserGroupIcon} />
-        <StatCard title="Eventos Ativos" value="86" icon={CalendarDaysIcon} />
-        <StatCard title="Projetos Cadastrados" value="432" icon={Cog6ToothIcon} />
-        <StatCard title="Espaços Verificados" value="789" icon={MapPinIcon} />
+        <StatCard title="Total de Agentes" value={loadingStats ? '...' : stats.totalAgents} icon={UserGroupIcon} />
+        <StatCard title="Eventos Ativos" value={loadingStats ? '...' : stats.activeEvents} icon={CalendarDaysIcon} />
+        <StatCard title="Projetos Cadastrados" value={loadingStats ? '...' : stats.registeredProjects} icon={Cog6ToothIcon} />
+        <StatCard title="Espaços Verificados" value={loadingStats ? '...' : stats.verifiedSpaces} icon={MapPinIcon} />
       </div>
 
       {/* Main Grid */}
@@ -39,10 +100,11 @@ function Dashboard() {
               <HomeIcon className="h-6 w-6 text-gray-600 dark:text-gray-300 mr-3" />
               <span>Editar Homepage</span>
             </Link>
-            <button className="w-full flex items-center p-3 bg-gray-100 dark:bg-gray-700/50 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors text-gray-700 dark:text-gray-300">
+            {/* Direct link to add a new opportunity/event */}
+            <Link to="/admin/opportunities" className="w-full flex items-center p-3 bg-gray-100 dark:bg-gray-700/50 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors text-gray-700 dark:text-gray-300">
               <PlusCircleIcon className="h-6 w-6 text-gray-600 dark:text-gray-300 mr-3" />
-              <span>Adicionar Novo Evento</span>
-            </button>
+              <span>Adicionar Nova Oportunidade</span>
+            </Link>
           </div>
         </div>
 

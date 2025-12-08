@@ -2,7 +2,13 @@ import { motion } from 'framer-motion';
 import { useContent } from '../context/ContentContext';
 
 function Hero() {
-  const { heroContent } = useContent();
+  const { content } = useContent();
+
+  if (!content) {
+    return null; // Or a loading skeleton
+  }
+  
+  const { titlePart1, titlePart2, subtitle } = content.hero;
 
   return (
     <motion.section 
@@ -15,11 +21,11 @@ function Hero() {
         <h2 
           className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 dark:text-white leading-tight"
         >
-          {heroContent.titlePart1}{' '}
-          <span className="text-blue-600 dark:text-blue-500">{heroContent.titlePart2}</span>
+          {titlePart1}{' '}
+          <span className="text-blue-600 dark:text-blue-500">{titlePart2}</span>
         </h2>
         <p className="mt-4 max-w-2xl mx-auto text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-300">
-          {heroContent.subtitle}
+          {subtitle}
         </p>
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
           <a

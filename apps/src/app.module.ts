@@ -5,6 +5,7 @@ import { AgentsModule } from './agents/agents.module';
 import { OpportunitiesModule } from './opportunities/opportunities.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { HealthModule } from './health/health.module';
+import { PageContentModule } from './page-content/page-content.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { HealthModule } from './health/health.module';
     AuthModule,
     AgentsModule,
     OpportunitiesModule,
+    PageContentModule,
   ],
 })
 export class AppModule {}

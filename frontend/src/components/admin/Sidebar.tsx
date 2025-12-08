@@ -8,7 +8,8 @@ const Sidebar = () => {
 
   const navItems = [
     { name: 'Dashboard', path: '/admin', icon: HomeIcon },
-    { name: 'Usuários', path: '/admin/users', icon: UsersIcon },
+    { name: 'Agentes', path: '/admin/agents', icon: UsersIcon },
+    { name: 'Oportunidades', path: '/admin/opportunities', icon: MegaphoneIcon }, // NEW ITEM
     { name: 'Eventos', path: '/admin/events', icon: MegaphoneIcon },
     { name: 'Projetos', path: '/admin/projects', icon: FolderIcon },
     { name: 'Configurações', path: '/admin/settings', icon: Cog6ToothIcon },

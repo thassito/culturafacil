@@ -157,3 +157,13 @@ enum EvaluationResult {
   approved
   rejected
 }
+
+model PageContent {
+  id        String   @id @default(uuid())
+  pageSlug  String   @unique @map("page_slug")
+  content   Json
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("page_content")
+}

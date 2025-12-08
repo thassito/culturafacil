@@ -16,6 +16,11 @@ import OpportunitiesPage from './pages/OpportunitiesPage';
 import AgentDashboardPage from './pages/AgentDashboardPage'; // Importa a nova página
 import SignupPage from './pages/SignupPage';
 
+import AdminAgentsPage from './pages/admin/AdminAgentsPage';
+import AdminOpportunitiesPage from './pages/admin/AdminOpportunitiesPage';
+import AdminEventsPage from './pages/admin/AdminEventsPage';
+import AdminProjectsPage from './pages/admin/AdminProjectsPage'; // <--- NEW IMPORT
+
 function App() {
   return (
     <AuthProvider>
@@ -53,6 +58,10 @@ function App() {
           >
             <Route index element={<Dashboard />} />
             <Route path="homepage" element={<AdminHomepageEditor />} />
+            <Route path="agents" element={<AdminAgentsPage />} />
+            <Route path="opportunities" element={<AdminOpportunitiesPage />} />
+            <Route path="events" element={<AdminEventsPage />} />
+            <Route path="projects" element={<AdminProjectsPage />} /> {/* <--- NEW ROUTE */}
             {/* Add other admin sub-routes here in the future */}
           </Route>
         </Routes>
