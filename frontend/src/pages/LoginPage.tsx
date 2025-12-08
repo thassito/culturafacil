@@ -1,16 +1,32 @@
-import React from 'react';
-import { useNavigate, Link } from 'react-router-dom'; // Import Link
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
+  
+  // Estados para controlar os inputs do formulário, erro e carregamento
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // Simulate login for agents
-    login(); // This logs in the admin globally for now, which is a temporary simplification
-    navigate('/'); // Redirect to homepage or agent dashboard
+    setError(null); // Limpa erros anteriores
+    setLoading(true); // Ativa o estado de carregamento
+
+    try {
+      // Chama a função de login do contexto com as credenciais
+      await login(email, password);
+      navigate('/'); // Redireciona para a home em caso de sucesso
+    } catch (err: any) {
+      // Captura o erro e define a mensagem de erro
+      setError(err.message || 'Ocorreu um erro desconhecido.');
+    } finally {
+      setLoading(false); // Desativa o estado de carregamento
+    }
   };
 
   return (
@@ -20,6 +36,12 @@ function LoginPage() {
           Acessar Plataforma
         </h2>
         <form className="space-y-6" onSubmit={handleSubmit}>
+          {/* Exibe a mensagem de erro, se houver */}
+          {error && (
+            <div className="p-3 bg-red-500/20 border border-red-500/50 rounded-md">
+              <p className="text-sm text-center text-red-400">{error}</p>
+            </div>
+          )}
           <div>
             <label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-300">
               Email
@@ -30,6 +52,8 @@ function LoginPage() {
               type="email"
               autoComplete="email"
               required
+              value={email} // Controlado pelo estado
+              onChange={(e) => setEmail(e.target.value)} // Atualiza o estado
               className="mt-1 block w-full px-4 py-3 bg-gray-100 dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder="seu@email.com"
             />
@@ -44,6 +68,8 @@ function LoginPage() {
               type="password"
               autoComplete="current-password"
               required
+              value={password} // Controlado pelo estado
+              onChange={(e) => setPassword(e.target.value)} // Atualiza o estado
               className="mt-1 block w-full px-4 py-3 bg-gray-100 dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder="••••••••"
             />
@@ -64,9 +90,10 @@ function LoginPage() {
           <div>
             <button
               type="submit"
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-bold text-gray-900 bg-white hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400"
+              disabled={loading} // Desabilita o botão durante o carregamento
+              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-bold text-gray-900 bg-white hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 disabled:opacity-50"
             >
-              Entrar
+              {loading ? 'Entrando...' : 'Entrar'}
             </button>
           </div>
         </form>

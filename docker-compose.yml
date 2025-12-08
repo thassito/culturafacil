@@ -38,51 +38,51 @@ services:
     networks:
       - cf-network
 
-  backend:
-    build:
-      context: ./apps
-      dockerfile: Dockerfile
-    container_name: cf-backend
-    restart: always
-    environment:
-      NODE_ENV: production
-      DATABASE_URL: postgresql://culturafacil:${DB_PASSWORD:-CulturaFacil2025!}@postgres:5432/culturafacil
-      REDIS_URL: redis://redis:6379
-      JWT_SECRET: ${JWT_SECRET:-cultura-facil-jwt-secret-2025}
-      JWT_EXPIRATION: 86400
-      API_PORT: 3000
-    ports:
-      - "3000:3000"
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    networks:
-      - cf-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/api/v1/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+#  backend:
+#    build:
+#      context: ./apps
+#      dockerfile: Dockerfile
+#    container_name: cf-backend
+#    restart: always
+#    environment:
+#      NODE_ENV: production
+#      DATABASE_URL: postgresql://culturafacil:${DB_PASSWORD:-CulturaFacil2025!}@postgres:5432/culturafacil
+#      REDIS_URL: redis://redis:6379
+#      JWT_SECRET: ${JWT_SECRET:-cultura-facil-jwt-secret-2025}
+#      JWT_EXPIRATION: 86400
+#      API_PORT: 3000
+#    ports:
+#      - "3000:3000"
+#    depends_on:
+#      postgres:
+#        condition: service_healthy
+#      redis:
+#        condition: service_healthy
+#    networks:
+#      - cf-network
+#    healthcheck:
+#      test: ["CMD", "curl", "-f", "http://localhost:3000/api/v1/health"]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
 
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: cf-frontend
-    restart: always
-    ports:
-      - "3001:80"
-    depends_on:
-      - backend
-    networks:
-      - cf-network
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+#  frontend:
+#    build:
+#      context: ./frontend
+#      dockerfile: Dockerfile
+#    container_name: cf-frontend
+#    restart: always
+#    ports:
+#      - "3001:80"
+#    depends_on:
+#      - backend
+#    networks:
+#      - cf-network
+#    healthcheck:
+#      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
 
 networks:
   cf-network:
