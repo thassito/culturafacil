@@ -1,16 +1,37 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react'; // Removed React import
 import { useAuth } from '../../context/AuthContext';
 import OpportunityForm from '../../components/admin/OpportunityForm'; // Reusing OpportunityForm
 
 const API_URL = import.meta.env.VITE_API_URL || 'https://api.culturafacil.com.br/api/v1';
 
+// Re-defining Opportunity interface for local clarity, same as in OpportunityForm.tsx
+type OpportunityType = 'editais' | 'chamada_publica' | 'inscricao_continua';
+type OpportunityStatus = 'draft' | 'published' | 'closed' | 'evaluation' | 'result' | 'archived';
+
+interface Opportunity {
+  id: string; // Assuming id is a string
+  name: string;
+  description: string;
+  type: OpportunityType;
+  status: OpportunityStatus;
+  registrationFrom: string;
+  registrationTo: string;
+  resultAnnouncedAt: string;
+  maxRegistrations: number;
+  budget: number;
+  formSchema: any; // Object
+}
+
+// Alias Opportunity as Project for semantic clarity in AdminProjectsPage
+type Project = Opportunity;
+
 function AdminProjectsPage() {
-  const [projects, setProjects] = useState([]); // Assuming projects are a type of opportunity or a separate entity
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [projects, setProjects] = useState<Project[]>([]); // Typed as Project[]
+  const [loading, setLoading] = useState<boolean>(true); // Explicit boolean type
+  const [error, setError] = useState<string | null>(null); // Explicit string | null type
   const { token } = useAuth();
-  const [showFormModal, setShowFormModal] = useState(false);
-  const [selectedProject, setSelectedProject] = useState(null); // Project (opportunity) to edit, or null for new
+  const [showFormModal, setShowFormModal] = useState<boolean>(false); // Explicit boolean type
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null); // Project (opportunity) to edit, or null for new
 
   const fetchProjects = async () => {
     try {
@@ -28,8 +49,8 @@ function AdminProjectsPage() {
       const data = await response.json();
       // Filter for projects if needed, or assume this endpoint returns only projects
       setProjects(data); 
-    } catch (err) {
-      setError(err.message);
+    } catch (err: unknown) { // Use unknown for better type safety
+      setError((err as Error).message); // Type assertion for error message
     } finally {
       setLoading(false);
     }
@@ -46,12 +67,12 @@ function AdminProjectsPage() {
     setShowFormModal(true);
   };
 
-  const handleEditProject = (project) => {
+  const handleEditProject = (project: Project) => { // Explicitly typed project
     setSelectedProject(project);
     setShowFormModal(true);
   };
 
-  const handleDeleteProject = async (projectId) => {
+  const handleDeleteProject = async (projectId: string) => { // Explicitly typed projectId
     if (window.confirm('Tem certeza que deseja deletar este projeto?')) {
       try {
         const response = await fetch(`${API_URL}/opportunities/${projectId}`, { // Reusing opportunities endpoint for deletion
@@ -64,8 +85,8 @@ function AdminProjectsPage() {
           throw new Error('Falha ao deletar projeto.');
         }
         fetchProjects(); // Refresh the list
-      } catch (err) {
-        setError(err.message);
+      } catch (err: unknown) { // Use unknown for better type safety
+        setError((err as Error).message); // Type assertion for error message
       }
     }
   };

@@ -2,8 +2,15 @@
 import { useEffect, useState } from 'react';
 import ProjectCard from '../components/ProjectCard';
 
+interface Project {
+  id: number;
+  name: string;
+  agent: string;
+  area: string;
+}
+
 function ProjectsPage() {
-  const [projects, setProjects] = useState<any[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -15,12 +22,12 @@ function ProjectsPage() {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const data = await response.json();
+        const data: Project[] = await response.json(); // Asserting the type here
         // Assuming projects might be filtered from opportunities, or opportunities contains project data.
         // Further refinement may be needed based on actual API response structure for projects.
         setProjects(data); 
-      } catch (e: any) {
-        setError(e.message);
+      } catch (e: unknown) { // Use unknown for better type safety
+        setError((e as Error).message); // Type assertion for error message
       } finally {
         setLoading(false);
       }

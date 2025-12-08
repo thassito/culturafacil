@@ -2,8 +2,15 @@
 import { useEffect, useState } from 'react';
 import SpaceCard from '../components/SpaceCard';
 
+interface Space {
+  id: number;
+  name: string;
+  type: string;
+  address: string;
+}
+
 function SpacesPage() {
-  const [spaces, setSpaces] = useState<any[]>([]);
+  const [spaces, setSpaces] = useState<Space[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -15,12 +22,12 @@ function SpacesPage() {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const data = await response.json();
+        const data: Space[] = await response.json(); // Asserting the type here
         // Assuming spaces might be filtered from opportunities, or opportunities contains space data.
         // Further refinement may be needed based on actual API response structure for spaces.
         setSpaces(data); 
-      } catch (e: any) {
-        setError(e.message);
+      } catch (e: unknown) { // Use unknown for better type safety
+        setError((e as Error).message); // Type assertion for error message
       } finally {
         setLoading(false);
       }

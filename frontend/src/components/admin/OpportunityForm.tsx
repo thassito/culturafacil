@@ -1,13 +1,49 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'; // Removed React import
 import { useAuth } from '../../context/AuthContext';
 
 const API_URL = import.meta.env.VITE_API_URL || 'https://api.culturafacil.com.br/api/v1';
 
-const opportunityTypes = ['editais', 'chamada_publica', 'inscricao_continua'];
-const opportunityStatuses = ['draft', 'published', 'closed', 'evaluation', 'result', 'archived'];
+type OpportunityType = 'editais' | 'chamada_publica' | 'inscricao_continua';
+type OpportunityStatus = 'draft' | 'published' | 'closed' | 'evaluation' | 'result' | 'archived';
 
-function OpportunityForm({ opportunity, onSave, onCancel }) {
-  const [formData, setFormData] = useState({
+interface OpportunityFormData {
+  name: string;
+  description: string;
+  type: OpportunityType;
+  status: OpportunityStatus;
+  registrationFrom: string; // ISO string or datetime-local value
+  registrationTo: string;   // ISO string or datetime-local value
+  resultAnnouncedAt: string; // ISO string or datetime-local value
+  maxRegistrations: string; // Stored as string in form, parsed to number
+  budget: string; // Stored as string in form, parsed to number
+  formSchema: string; // Stringified JSON
+}
+
+interface Opportunity {
+  id: string; // Assuming id is a string
+  name: string;
+  description: string;
+  type: OpportunityType;
+  status: OpportunityStatus;
+  registrationFrom: string;
+  registrationTo: string;
+  resultAnnouncedAt: string;
+  maxRegistrations: number;
+  budget: number;
+  formSchema: any; // Object
+}
+
+interface OpportunityFormProps {
+  opportunity?: Opportunity | null; // Allow null for optional opportunity
+  onSave: () => void;
+  onCancel: () => void;
+}
+
+const opportunityTypes: OpportunityType[] = ['editais', 'chamada_publica', 'inscricao_continua']; // Explicit type
+const opportunityStatuses: OpportunityStatus[] = ['draft', 'published', 'closed', 'evaluation', 'result', 'archived']; // Explicit type
+
+function OpportunityForm({ opportunity, onSave, onCancel }: OpportunityFormProps) { // Added type to props
+  const [formData, setFormData] = useState<OpportunityFormData>({ // Added type to useState
     name: '',
     description: '',
     type: opportunityTypes[0],
@@ -17,10 +53,10 @@ function OpportunityForm({ opportunity, onSave, onCancel }) {
     resultAnnouncedAt: '',
     maxRegistrations: '',
     budget: '',
-    formSchema: '{}', // Stringified JSON
+    formSchema: '{}',
   });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState<boolean>(false); // Explicit boolean type
+  const [error, setError] = useState<string | null>(null); // Explicit string | null type
   const { token } = useAuth();
 
   useEffect(() => {
@@ -55,19 +91,19 @@ function OpportunityForm({ opportunity, onSave, onCancel }) {
     }
   }, [opportunity]);
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
     const isCreating = !opportunity;
     const method = isCreating ? 'POST' : 'PATCH';
-    const url = isCreating ? `${API_URL}/opportunities` : `${API_URL}/opportunities/${opportunity.id}`;
+    const url = isCreating ? `${API_URL}/opportunities` : `${API_URL}/opportunities/${opportunity?.id}`; // Use optional chaining for opportunity.id
 
     try {
       const payload = {
@@ -75,9 +111,9 @@ function OpportunityForm({ opportunity, onSave, onCancel }) {
         registrationFrom: formData.registrationFrom ? new Date(formData.registrationFrom).toISOString() : null,
         registrationTo: formData.registrationTo ? new Date(formData.registrationTo).toISOString() : null,
         resultAnnouncedAt: formData.resultAnnouncedAt ? new Date(formData.resultAnnouncedAt).toISOString() : null,
-        maxRegistrations: formData.maxRegistrations ? parseInt(formData.maxRegistrations) : null,
+        maxRegistrations: formData.maxRegistrations ? parseInt(formData.maxRegistrations, 10) : null, // Added radix
         budget: formData.budget ? parseFloat(formData.budget) : null,
-        formSchema: JSON.parse(formData.formSchema), // Parse JSON string back to object
+        formSchema: JSON.parse(formData.formSchema),
       };
 
       const response = await fetch(url, {
@@ -95,8 +131,8 @@ function OpportunityForm({ opportunity, onSave, onCancel }) {
       }
 
       onSave(); // Notify parent component of successful save
-    } catch (err) {
-      setError(err.message);
+    } catch (err: unknown) { // Use unknown for better type safety
+      setError((err as Error).message); // Type assertion for error message
     } finally {
       setLoading(false);
     }
@@ -115,7 +151,7 @@ function OpportunityForm({ opportunity, onSave, onCancel }) {
       </div>
       <div>
         <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Descrição</label>
-        <textarea id="description" name="description" value={formData.description} onChange={handleChange} rows="3"
+        <textarea id="description" name="description" value={formData.description} onChange={handleChange} rows={3}
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"></textarea>
       </div>
       <div>
@@ -159,7 +195,7 @@ function OpportunityForm({ opportunity, onSave, onCancel }) {
       </div>
       <div>
         <label htmlFor="formSchema" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Schema do Formulário (JSON)</label>
-        <textarea id="formSchema" name="formSchema" value={formData.formSchema} onChange={handleChange} rows="8"
+        <textarea id="formSchema" name="formSchema" value={formData.formSchema} onChange={handleChange} rows={8}
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white font-mono text-xs"></textarea>
       </div>
 

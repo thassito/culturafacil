@@ -1,8 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'; // Removed React import
 import { useContent } from '../../context/ContentContext';
 import { useAuth } from '../../context/AuthContext';
 
-const FeatureEditor = ({ feature, onChange, index }) => {
+interface FeatureItem {
+  name: string;
+  description: string;
+}
+
+interface FeatureEditorProps {
+  feature: FeatureItem;
+  onChange: (index: number, field: keyof FeatureItem, value: string) => void;
+  index: number;
+}
+
+const FeatureEditor = ({ feature, onChange, index }: FeatureEditorProps) => { // Added type to props
   return (
     <div className="p-4 border border-gray-300 dark:border-gray-700 rounded-lg space-y-3">
       <h3 className="text-lg font-semibold">Feature {index + 1}</h3>
@@ -13,7 +24,7 @@ const FeatureEditor = ({ feature, onChange, index }) => {
         <input
           id={`featureName${index}`}
           value={feature.name}
-          onChange={(e) => onChange(index, 'name', e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(index, 'name', e.target.value)} // Typed event
           className="w-full px-4 py-2 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white"
         />
       </div>
@@ -24,7 +35,7 @@ const FeatureEditor = ({ feature, onChange, index }) => {
         <textarea
           id={`featureDesc${index}`}
           value={feature.description}
-          onChange={(e) => onChange(index, 'description', e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => onChange(index, 'description', e.target.value)} // Typed event
           rows={3}
           className="w-full px-4 py-2 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white"
         />
@@ -33,16 +44,40 @@ const FeatureEditor = ({ feature, onChange, index }) => {
   );
 };
 
+// ... (FeatureItem, FeatureEditorProps interfaces are already added)
+
+interface HeroContent {
+  titlePart1: string;
+  titlePart2: string;
+  subtitle: string;
+}
+
+interface FeaturesContent {
+  title: string;
+  subtitle: string;
+  features: FeatureItem[];
+}
+
+interface Content {
+  hero: HeroContent;
+  features: FeaturesContent;
+}
+
+interface StatusState {
+  loading: boolean;
+  saved: boolean;
+  error: string | null;
+}
 
 function AdminHomepageEditor() {
   const { content, saveContent } = useContent();
   const { token } = useAuth();
   
   // Local form state
-  const [heroState, setHeroState] = useState({ titlePart1: '', titlePart2: '', subtitle: '' });
-  const [featuresState, setFeaturesState] = useState({ title: '', subtitle: '', features: [] });
+  const [heroState, setHeroState] = useState<HeroContent>({ titlePart1: '', titlePart2: '', subtitle: '' }); // Typed
+  const [featuresState, setFeaturesState] = useState<FeaturesContent>({ title: '', subtitle: '', features: [] }); // Typed
   
-  const [status, setStatus] = useState({ loading: false, saved: false, error: null });
+  const [status, setStatus] = useState<StatusState>({ loading: false, saved: false, error: null }); // Typed
 
   useEffect(() => {
     if (content) {
@@ -51,7 +86,7 @@ function AdminHomepageEditor() {
     }
   }, [content]);
 
-  const handleFeatureChange = (index, field, value) => {
+  const handleFeatureChange = (index: number, field: keyof FeatureItem, value: string) => { // Typed parameters
     const updatedFeatures = [...featuresState.features];
     updatedFeatures[index] = { ...updatedFeatures[index], [field]: value };
     setFeaturesState(prevState => ({ ...prevState, features: updatedFeatures }));
@@ -66,14 +101,14 @@ function AdminHomepageEditor() {
 
     setStatus({ loading: true, saved: false, error: null });
     
-    const newContent = { hero: heroState, features: featuresState };
+    const newContent: Content = { hero: heroState, features: featuresState }; // Typed newContent
 
     try {
       await saveContent(newContent, token);
       setStatus({ loading: false, saved: true, error: null });
       setTimeout(() => setStatus(prev => ({ ...prev, saved: false })), 2000);
-    } catch (err) {
-      setStatus({ loading: false, saved: false, error: 'Falha ao salvar o conteúdo.' });
+    } catch (err: unknown) { // Use unknown for better type safety
+      setStatus({ loading: false, saved: false, error: (err as Error).message }); // Type assertion for error message
     }
   };
 

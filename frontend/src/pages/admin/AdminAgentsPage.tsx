@@ -1,16 +1,29 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react'; // Removed React import
 import { useAuth } from '../../context/AuthContext';
 import AgentForm from '../../components/admin/AgentForm';
 
 const API_URL = import.meta.env.VITE_API_URL || 'https://api.culturafacil.com.br/api/v1';
 
+interface Agent {
+  id: string;
+  name: string;
+  user: { email: string };
+  cpf: string;
+  type: 'individual' | 'collective' | 'organization';
+  bio: string;
+  phone: string;
+  website: string;
+  avatarUrl: string;
+  isVerified?: boolean;
+}
+
 function AdminAgentsPage() {
-  const [agents, setAgents] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [agents, setAgents] = useState<Agent[]>([]); // Typed as Agent[]
+  const [loading, setLoading] = useState<boolean>(true); // Explicit boolean type
+  const [error, setError] = useState<string | null>(null); // Explicit string | null type
   const { token } = useAuth();
-  const [showFormModal, setShowFormModal] = useState(false);
-  const [selectedAgent, setSelectedAgent] = useState(null); // Agent to edit, or null for new
+  const [showFormModal, setShowFormModal] = useState<boolean>(false); // Explicit boolean type
+  const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null); // Agent to edit, or null for new
 
   const fetchAgents = async () => {
     try {
@@ -25,8 +38,8 @@ function AdminAgentsPage() {
       }
       const data = await response.json();
       setAgents(data);
-    } catch (err) {
-      setError(err.message);
+    } catch (err: unknown) { // Use unknown for better type safety
+      setError((err as Error).message); // Type assertion for error message
     } finally {
       setLoading(false);
     }
@@ -43,12 +56,12 @@ function AdminAgentsPage() {
     setShowFormModal(true);
   };
 
-  const handleEditAgent = (agent) => {
+  const handleEditAgent = (agent: Agent) => { // Explicitly typed agent
     setSelectedAgent(agent);
     setShowFormModal(true);
   };
 
-  const handleDeleteAgent = async (agentId) => {
+  const handleDeleteAgent = async (agentId: string) => { // Explicitly typed agentId
     if (window.confirm('Tem certeza que deseja deletar este agente?')) {
       try {
         const response = await fetch(`${API_URL}/agents/${agentId}`, {
@@ -61,8 +74,8 @@ function AdminAgentsPage() {
           throw new Error('Falha ao deletar agente.');
         }
         fetchAgents(); // Refresh the list
-      } catch (err) {
-        setError(err.message);
+      } catch (err: unknown) { // Use unknown for better type safety
+        setError((err as Error).message); // Type assertion for error message
       }
     }
   };

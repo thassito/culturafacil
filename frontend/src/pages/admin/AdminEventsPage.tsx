@@ -1,16 +1,34 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react'; // Removed React import
 import { useAuth } from '../../context/AuthContext';
 import OpportunityForm from '../../components/admin/OpportunityForm';
 
 const API_URL = import.meta.env.VITE_API_URL || 'https://api.culturafacil.com.br/api/v1';
 
+type OpportunityType = 'editais' | 'chamada_publica' | 'inscricao_continua';
+type OpportunityStatus = 'draft' | 'published' | 'closed' | 'evaluation' | 'result' | 'archived';
+
+interface Opportunity {
+  id: string; // Assuming id is a string
+  name: string;
+  description: string;
+  type: OpportunityType;
+  status: OpportunityStatus;
+  registrationFrom: string;
+  registrationTo: string;
+  resultAnnouncedAt: string;
+  maxRegistrations: number;
+  budget: number;
+  formSchema: any; // Object
+}
+
 function AdminEventsPage() {
-  const [opportunities, setOpportunities] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [opportunities, setOpportunities] = useState<Opportunity[]>([]); // Typed as Opportunity[]
+  const [loading, setLoading] = useState<boolean>(true); // Explicit boolean type
+  const [error, setError] = useState<string | null>(null); // Explicit string | null type
   const { token } = useAuth();
-  const [showFormModal, setShowFormModal] = useState(false);
-  const [selectedOpportunity, setSelectedOpportunity] = useState(null); // Opportunity to edit, or null for new
+  const [showFormModal, setShowFormModal] = useState<boolean>(false); // Explicit boolean type
+  const [selectedOpportunity, setSelectedOpportunity] = useState<Opportunity | null>(null); // Opportunity to edit, or null for new
+
 
   const fetchOpportunities = async () => {
     try {
@@ -27,8 +45,8 @@ function AdminEventsPage() {
       // For now, let's just list all opportunities as "events".
       // A filtering mechanism might be needed later if 'events' are a specific type of opportunity.
       setOpportunities(data); 
-    } catch (err) {
-      setError(err.message);
+    } catch (err: unknown) { // Use unknown for better type safety
+      setError((err as Error).message); // Type assertion for error message
     } finally {
       setLoading(false);
     }
@@ -45,12 +63,12 @@ function AdminEventsPage() {
     setShowFormModal(true);
   };
 
-  const handleEditOpportunity = (opportunity) => {
+  const handleEditOpportunity = (opportunity: Opportunity) => { // Explicitly typed opportunity
     setSelectedOpportunity(opportunity);
     setShowFormModal(true);
   };
 
-  const handleDeleteOpportunity = async (opportunityId) => {
+  const handleDeleteOpportunity = async (opportunityId: string) => { // Explicitly typed opportunityId
     if (window.confirm('Tem certeza que deseja deletar este evento?')) {
       try {
         const response = await fetch(`${API_URL}/opportunities/${opportunityId}`, {
@@ -63,10 +81,10 @@ function AdminEventsPage() {
           throw new Error('Falha ao deletar evento.');
         }
         fetchOpportunities(); // Refresh the list
-      } catch (err) {
-        setError(err.message);
+      } catch (err: unknown) { // Use unknown for better type safety
+        setError((err as Error).message); // Type assertion for error message
       }
-    }
+      }
   };
 
   const handleFormSave = () => {

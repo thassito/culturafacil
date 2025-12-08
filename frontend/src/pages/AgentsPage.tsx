@@ -2,8 +2,15 @@
 import { useEffect, useState } from 'react';
 import AgentCard from '../components/AgentCard';
 
+interface Agent {
+  id: number;
+  name: string;
+  area: string;
+  location: string;
+}
+
 function AgentsPage() {
-  const [agents, setAgents] = useState<any[]>([]);
+  const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -14,10 +21,10 @@ function AgentsPage() {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const data = await response.json();
+        const data: Agent[] = await response.json();
         setAgents(data);
-      } catch (e: any) {
-        setError(e.message);
+      } catch (e: unknown) { // Use unknown for better type safety
+        setError((e as Error).message); // Type assertion for error message
       } finally {
         setLoading(false);
       }

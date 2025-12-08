@@ -5,6 +5,22 @@ import { useAuth } from '../../context/AuthContext';
 
 const API_URL = import.meta.env.VITE_API_URL || 'https://api.culturafacil.com.br/api/v1';
 
+interface DashboardStats {
+  totalAgents: string;
+  activeEvents: string;
+  registeredProjects: string;
+  verifiedSpaces: string;
+}
+
+interface Opportunity { // Reusing Opportunity interface from previous files
+  id: string;
+  name: string;
+  type: string;
+  status: string;
+  registrationFrom: string;
+  registrationTo: string;
+}
+
 const StatCard = ({ title, value, icon: Icon }: { title: string, value: string | number, icon: React.ElementType }) => (
   <div className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-md p-6 rounded-lg border border-gray-200 dark:border-gray-700/50 flex items-center space-x-4">
     <div className="bg-blue-500/10 p-3 rounded-full">
@@ -19,14 +35,14 @@ const StatCard = ({ title, value, icon: Icon }: { title: string, value: string |
 
 function Dashboard() {
   const { token } = useAuth();
-  const [stats, setStats] = useState({
+  const [stats, setStats] = useState<DashboardStats>({ // Typed
     totalAgents: '...',
     activeEvents: '...',
     registeredProjects: '...',
-    verifiedSpaces: '...', // This one might need a dedicated endpoint or logic
+    verifiedSpaces: '...',
   });
-  const [loadingStats, setLoadingStats] = useState(true);
-  const [errorStats, setErrorStats] = useState(null);
+  const [loadingStats, setLoadingStats] = useState<boolean>(true); // Typed
+  const [errorStats, setErrorStats] = useState<string | null>(null); // Typed
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -42,8 +58,8 @@ function Dashboard() {
           fetch(`${API_URL}/opportunities`, { headers: { 'Authorization': `Bearer ${token}` } }),
         ]);
 
-        const agentsData = await agentsRes.json();
-        const opportunitiesData = await opportunitiesRes.json();
+        const agentsData: any[] = await agentsRes.json(); // Explicit any[] for now, could be Agent[]
+        const opportunitiesData: Opportunity[] = await opportunitiesRes.json(); // Explicitly typed
 
         if (!agentsRes.ok || !opportunitiesRes.ok) {
           throw new Error('Failed to fetch dashboard stats');
@@ -53,13 +69,13 @@ function Dashboard() {
         // For 'Espaços Verificados', we don't have an endpoint yet, so keeping placeholder
         setStats({
           totalAgents: agentsData.length.toLocaleString(),
-          activeEvents: opportunitiesData.filter(op => op.status === 'published' && new Date(op.registrationTo) > new Date()).length.toLocaleString(), // Simplified logic
+          activeEvents: opportunitiesData.filter((op: Opportunity) => op.status === 'published' && new Date(op.registrationTo) > new Date()).length.toLocaleString(), // Typed op
           registeredProjects: opportunitiesData.length.toLocaleString(), // Assuming all opportunities are projects for now
           verifiedSpaces: 'N/A', // Placeholder
         });
 
-      } catch (err) {
-        setErrorStats(err.message);
+      } catch (err: unknown) { // Typed err
+        setErrorStats((err as Error).message); // Type assertion
         setStats({
           totalAgents: 'Erro',
           activeEvents: 'Erro',
@@ -84,6 +100,11 @@ function Dashboard() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+        {errorStats && (
+          <div className="lg:col-span-4 text-red-500 text-center py-4">
+            Erro ao carregar estatísticas: {errorStats}
+          </div>
+        )}
         <StatCard title="Total de Agentes" value={loadingStats ? '...' : stats.totalAgents} icon={UserGroupIcon} />
         <StatCard title="Eventos Ativos" value={loadingStats ? '...' : stats.activeEvents} icon={CalendarDaysIcon} />
         <StatCard title="Projetos Cadastrados" value={loadingStats ? '...' : stats.registeredProjects} icon={Cog6ToothIcon} />

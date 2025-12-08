@@ -1,22 +1,53 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'; // Removed React import
 import { useAuth } from '../../context/AuthContext';
 
 const API_URL = import.meta.env.VITE_API_URL || 'https://api.culturafacil.com.br/api/v1';
 
-function AgentForm({ agent, onSave, onCancel }) {
-  const [formData, setFormData] = useState({
+interface AgentFormData {
+  name: string;
+  email: string;
+  cpf: string;
+  type: 'individual' | 'collective' | 'organization';
+  bio: string;
+  phone: string;
+  website: string;
+  avatarUrl: string;
+  password?: string; // Optional for creation or password reset
+}
+
+interface Agent {
+  id: string; // Assuming id is a string for existing agents
+  name: string;
+  user: { email: string };
+  cpf: string;
+  type: 'individual' | 'collective' | 'organization';
+  bio: string;
+  phone: string;
+  website: string;
+  avatarUrl: string;
+  isVerified?: boolean;
+}
+
+interface AgentFormProps {
+  agent?: Agent | null; // Allow null for optional agent
+  onSave: () => void;
+  onCancel: () => void;
+}
+
+function AgentForm({ agent, onSave, onCancel }: AgentFormProps) { // Added type to props
+  const [formData, setFormData] = useState<AgentFormData>({ // Added type to useState
     name: '',
     email: '',
     cpf: '',
-    type: 'individual', // Default type
+    type: 'individual',
     bio: '',
     phone: '',
     website: '',
     avatarUrl: '',
-    password: '', // Only for creation or password reset
+    password: '',
   });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState<boolean>(false); // Explicit boolean type
+  const [error, setError] = useState<string | null>(null); // Explicit string | null type
   const { token } = useAuth();
 
   useEffect(() => {
@@ -49,22 +80,23 @@ function AgentForm({ agent, onSave, onCancel }) {
     }
   }, [agent]);
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
     const isCreating = !agent;
     const method = isCreating ? 'POST' : 'PATCH';
-    const url = isCreating ? `${API_URL}/agents` : `${API_URL}/agents/${agent.id}`;
+    const url = isCreating ? `${API_URL}/agents` : `${API_URL}/agents/${agent?.id}`; // Use optional chaining for agent.id
 
     try {
-      const payload = {
+      // Initialize payload with common properties
+      let payload: Partial<AgentFormData> = {
         name: formData.name,
         cpf: formData.cpf,
         type: formData.type,
@@ -76,12 +108,19 @@ function AgentForm({ agent, onSave, onCancel }) {
 
       if (isCreating) {
         // For creation, email and password are required
-        payload.email = formData.email;
-        payload.password = formData.password;
+        payload = {
+          ...payload,
+          email: formData.email,
+          password: formData.password,
+        };
       } else {
         // For update, only include password if it's explicitly set
         if (formData.password) {
           payload.password = formData.password;
+        }
+        // Only include email if it's being updated and agent is defined
+        if (agent && formData.email !== agent.user.email) {
+          payload.email = formData.email;
         }
       }
 
@@ -100,8 +139,8 @@ function AgentForm({ agent, onSave, onCancel }) {
       }
 
       onSave(); // Notify parent component of successful save
-    } catch (err) {
-      setError(err.message);
+    } catch (err: unknown) { // Use unknown for better type safety
+      setError((err as Error).message); // Type assertion for error message
     } finally {
       setLoading(false);
     }
@@ -139,7 +178,7 @@ function AgentForm({ agent, onSave, onCancel }) {
       </div>
       <div>
         <label htmlFor="bio" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Bio</label>
-        <textarea id="bio" name="bio" value={formData.bio} onChange={handleChange} rows="3"
+        <textarea id="bio" name="bio" value={formData.bio} onChange={handleChange} rows={3}
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"></textarea>
       </div>
       <div>
