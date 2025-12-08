@@ -7,14 +7,14 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const { isAdminLoggedIn } = useAuth();
+  const { isAuthenticated } = useAuth(); // Usar isAuthenticated
 
-  if (!isAdminLoggedIn) {
-    // If not logged in, redirect to the admin login page
+  if (!isAuthenticated) { // Verificar se o usuário está autenticado
+    // Se não estiver autenticado, redireciona para a página de login do admin
     return <Navigate to="/admin/login" replace />;
   }
 
-  // If logged in, render the component
+  // Se estiver autenticado, renderiza o componente
   return children;
 };
 

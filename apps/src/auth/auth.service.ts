@@ -33,6 +33,7 @@ export class AuthService {
         agent: {
           create: {
             name: dto.name || null,
+            cpf: dto.cpf,
           },
         },
       },

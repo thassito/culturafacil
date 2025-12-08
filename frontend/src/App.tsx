@@ -13,6 +13,7 @@ import SpacesPage from './pages/SpacesPage';
 import AgentsPage from './pages/AgentsPage';
 import ProjectsPage from './pages/ProjectsPage';
 import OpportunitiesPage from './pages/OpportunitiesPage';
+import AgentDashboardPage from './pages/AgentDashboardPage'; // Importa a nova página
 import SignupPage from './pages/SignupPage';
 
 function App() {
@@ -29,6 +30,16 @@ function App() {
           <Route path="/agentes" element={<AgentsPage />} />
           <Route path="/projetos" element={<ProjectsPage />} />
           <Route path="/oportunidades" element={<OpportunitiesPage />} />
+
+          {/* Agent Dashboard Route (Protected) */}
+          <Route 
+            path="/painel" 
+            element={
+              <ProtectedRoute>
+                <AgentDashboardPage />
+              </ProtectedRoute>
+            } 
+          />
 
           {/* Admin Routes */}
           <Route path="/admin/login" element={<AdminLoginPage />} />

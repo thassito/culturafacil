@@ -20,7 +20,7 @@ function LoginPage() {
     try {
       // Chama a função de login do contexto com as credenciais
       await login(email, password);
-      navigate('/'); // Redireciona para a home em caso de sucesso
+      navigate('/painel'); // Redireciona para o painel do agente em caso de sucesso
     } catch (err: any) {
       // Captura o erro e define a mensagem de erro
       setError(err.message || 'Ocorreu um erro desconhecido.');

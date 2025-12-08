@@ -1,15 +1,43 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 function SignupPage() {
+  const { signup } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  // Estados para controlar os inputs do formulário
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [cpf, setCpf] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // In a real app, you would register the user here.
-    // For now, we'll just redirect to the login page as a simulation.
-    console.log('Simulating account creation...');
-    navigate('/login');
+    setError(null);
+
+    // Validação de confirmação de senha
+    if (password !== confirmPassword) {
+      setError('As senhas não coincidem.');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      // Chama a função signup do contexto com as credenciais
+      await signup(email, password, fullName, cpf);
+      alert('Cadastro realizado com sucesso! Você será redirecionado para a página de login.');
+      navigate('/login'); // Redireciona para a página de login após o sucesso
+    } catch (err: any) {
+      // Captura o erro e define a mensagem de erro
+      setError(err.message || 'Ocorreu um erro desconhecido.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -19,6 +47,11 @@ function SignupPage() {
           Criar sua Conta
         </h2>
         <form className="space-y-4" onSubmit={handleSubmit}>
+          {error && (
+            <div className="p-3 bg-red-500/20 border border-red-500/50 rounded-md">
+              <p className="text-sm text-center text-red-400">{error}</p>
+            </div>
+          )}
           <div>
             <label htmlFor="fullName" className="text-sm font-medium text-gray-700 dark:text-gray-300">
               Nome Completo
@@ -28,6 +61,8 @@ function SignupPage() {
               name="fullName"
               type="text"
               required
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
               className="mt-1 block w-full px-4 py-3 bg-gray-100 dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Seu nome completo"
             />
@@ -42,8 +77,25 @@ function SignupPage() {
               type="email"
               autoComplete="email"
               required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="mt-1 block w-full px-4 py-3 bg-gray-100 dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="seu@email.com"
+            />
+          </div>
+          <div>
+            <label htmlFor="cpf" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              CPF
+            </label>
+            <input
+              id="cpf"
+              name="cpf"
+              type="text"
+              required
+              value={cpf}
+              onChange={(e) => setCpf(e.target.value)}
+              className="mt-1 block w-full px-4 py-3 bg-gray-100 dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="000.000.000-00"
             />
           </div>
           <div>
@@ -55,6 +107,23 @@ function SignupPage() {
               name="password"
               type="password"
               required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="mt-1 block w-full px-4 py-3 bg-gray-100 dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="••••••••"
+            />
+          </div>
+          <div>
+            <label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Confirmar Senha
+            </label>
+            <input
+              id="confirmPassword"
+              name="confirmPassword"
+              type="password"
+              required
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
               className="mt-1 block w-full px-4 py-3 bg-gray-100 dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="••••••••"
             />
@@ -62,9 +131,10 @@ function SignupPage() {
           <div>
             <button
               type="submit"
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              disabled={loading}
+              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
             >
-              Criar Conta
+              {loading ? 'Criando Conta...' : 'Criar Conta'}
             </button>
           </div>
         </form>

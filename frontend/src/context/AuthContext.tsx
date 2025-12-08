@@ -1,78 +1,99 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-// A interface define o formato dos dados que o contexto irá fornecer.
+// Define o formato dos dados do usuário (agente) e do contexto
+interface User {
+  id: string;
+  email: string;
+  // Adicione outros campos do agente que a API retorna, se necessário
+  name?: string;
+}
+
 interface AuthContextType {
-  isAdminLoggedIn: boolean;
-  login: (email, password) => Promise<void>;
-  logout: () => void;
+  isAuthenticated: boolean;
+  user: User | null;
   token: string | null;
+  login: (email, password) => Promise<void>;
+  signup: (email, password, name, cpf) => Promise<void>;
+  logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// URL da API - usa a variável de ambiente do Vite ou um fallback
+const API_URL = import.meta.env.VITE_API_URL || 'https://novo.culturafacil.com.br/api/v1';
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
 
-  // Efeito para verificar o token no carregamento inicial
+  // Efeito para verificar o token e usuário no carregamento inicial
   useEffect(() => {
     const storedToken = localStorage.getItem('authToken');
-    if (storedToken) {
+    const storedUser = localStorage.getItem('user');
+    if (storedToken && storedUser) {
       setToken(storedToken);
-      setIsAdminLoggedIn(true);
+      setUser(JSON.parse(storedUser));
     }
   }, []);
 
-  // Função de login assíncrona que chama a API
   const login = async (email, password) => {
-    try {
-      const response = await fetch('http://localhost:3000/api/v1/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
+    const response = await fetch(`${API_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
 
-      if (!response.ok) {
-        // Lança um erro se a resposta da API não for bem-sucedida
-        throw new Error('Falha no login. Verifique suas credenciais.');
-      }
-
-      const data = await response.json();
-      
-      // Armazena o token e atualiza o estado
-      localStorage.setItem('authToken', data.access_token);
-      setToken(data.access_token);
-      setIsAdminLoggedIn(true);
-
-    } catch (error) {
-      console.error('Erro de login:', error);
-      // Garante que o estado de logout esteja correto em caso de falha
-      localStorage.removeItem('authToken');
-      setToken(null);
-      setIsAdminLoggedIn(false);
-      // Propaga o erro para que a página de login possa tratá-lo
-      throw error;
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Falha no login');
     }
+
+    const data = await response.json();
+    
+    // Armazena o token e dados do agente
+    localStorage.setItem('authToken', data.token);
+    localStorage.setItem('user', JSON.stringify(data.agent));
+    setToken(data.token);
+    setUser(data.agent);
+  };
+  
+  const signup = async (email, password, name, cpf) => {
+    const response = await fetch(`${API_URL}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, name, cpf }),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Falha no cadastro');
+    }
+
+    const data = await response.json();
+
+    // Armazena o token e dados do agente após o registro
+    localStorage.setItem('authToken', data.token);
+    localStorage.setItem('user', JSON.stringify(data.agent));
+    setToken(data.token);
+    setUser(data.agent);
   };
 
-  // Função de logout
   const logout = () => {
     localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
     setToken(null);
-    setIsAdminLoggedIn(false);
+    setUser(null);
   };
 
-  // Fornece o estado e as funções para os componentes filhos
+  const isAuthenticated = !!token;
+
   return (
-    <AuthContext.Provider value={{ isAdminLoggedIn, token, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, user, token, login, signup, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-// Hook customizado para facilitar o uso do contexto
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {

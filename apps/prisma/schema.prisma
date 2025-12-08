@@ -27,6 +27,7 @@ model Agent {
   id         String    @id @default(uuid())
   userId     String    @unique @map("user_id")
   name       String?
+  cpf        String    @unique // Adicionado campo CPF
   type       AgentType?
   bio        String?
   phone      String?

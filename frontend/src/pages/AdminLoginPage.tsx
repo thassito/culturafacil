@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -6,12 +6,28 @@ function AdminLoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  // Estados para controlar os inputs do formulário
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null); // Estado para mensagens de erro
+  const [loading, setLoading] = useState(false); // Estado para controlar o carregamento
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // Here you would typically verify credentials
-    // For now, we'll just simulate a successful login
-    login();
-    navigate('/admin');
+    setError(null); // Limpa erros anteriores
+    setLoading(true); // Ativa o estado de carregamento
+
+    try {
+      // Chama a função de login do contexto com as credenciais
+      await login(email, password);
+      // Redireciona para a área administrativa após o login bem-sucedido
+      navigate('/admin'); 
+    } catch (err: any) {
+      // Captura o erro e define a mensagem de erro
+      setError(err.message || 'Ocorreu um erro desconhecido.');
+    } finally {
+      setLoading(false); // Desativa o estado de carregamento
+    }
   };
 
   return (
@@ -20,6 +36,12 @@ function AdminLoginPage() {
         <h2 className="text-3xl font-bold text-center text-gray-900 dark:text-white">
           Acessar Área Administrativa
         </h2>
+        {/* Exibe a mensagem de erro, se houver */}
+        {error && (
+            <div className="p-3 bg-red-500/20 border border-red-500/50 rounded-md">
+              <p className="text-sm text-center text-red-400">{error}</p>
+            </div>
+          )}
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div>
             <label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -31,6 +53,8 @@ function AdminLoginPage() {
               type="email"
               autoComplete="email"
               required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="mt-1 block w-full px-4 py-3 bg-gray-100 dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder="admin@culturafacil.com"
             />
@@ -45,6 +69,8 @@ function AdminLoginPage() {
               type="password"
               autoComplete="current-password"
               required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               className="mt-1 block w-full px-4 py-3 bg-gray-100 dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder="••••••••"
             />
@@ -65,9 +91,10 @@ function AdminLoginPage() {
           <div>
             <button
               type="submit"
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-bold text-gray-900 bg-white hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400"
+              disabled={loading} // Desabilita o botão durante o carregamento
+              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-bold text-gray-900 bg-white hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 disabled:opacity-50"
             >
-              Entrar como Administrador
+              {loading ? 'Entrando...' : 'Entrar como Administrador'}
             </button>
           </div>
         </form>
