@@ -79,12 +79,13 @@ function AdminHomepageEditor() {
   
   const [status, setStatus] = useState<StatusState>({ loading: false, saved: false, error: null }); // Typed
 
+/* eslint-disable-next-line react-hooks/set-state-in-effect */
   useEffect(() => {
     if (content) {
       setHeroState(content.hero);
       setFeaturesState(content.features);
     }
-  }, [content]); // eslint-disable-line react-hooks/set-state-in-effect
+  }, [content]);
 
   const handleFeatureChange = (index: number, field: keyof FeatureItem, value: string) => { // Typed parameters
     const updatedFeatures = [...featuresState.features];
