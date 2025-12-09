@@ -42,6 +42,7 @@ export class AgentsService {
     const [data, total] = await Promise.all([
       this.prisma.agent.findMany({
         where: { deletedAt: null },
+        include: { user: { select: { email: true } } },
         take: limit,
         skip: offset,
         orderBy: { createdAt: 'desc' },

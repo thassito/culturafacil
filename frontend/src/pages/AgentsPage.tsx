@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import AgentCard from '../components/AgentCard';
 
-const API_URL = 'https://api.culturafacil.com.br/api/v1';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
 
 interface Agent {
   id: number;
@@ -23,8 +23,8 @@ function AgentsPage() {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const data: Agent[] = await response.json();
-        setAgents(data);
+        const jsonResponse = await response.json();
+        setAgents(jsonResponse.data || []);
       } catch (e: unknown) { // Use unknown for better type safety
         setError((e as Error).message); // Type assertion for error message
       } finally {

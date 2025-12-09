@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import ProjectCard from '../components/ProjectCard';
 
-const API_URL = 'https://api.culturafacil.com.br/api/v1';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
 
 interface Project {
   id: number;
@@ -24,10 +24,8 @@ function ProjectsPage() {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const data: Project[] = await response.json(); // Asserting the type here
-        // Assuming projects might be filtered from opportunities, or opportunities contains project data.
-        // Further refinement may be needed based on actual API response structure for projects.
-        setProjects(data); 
+        const jsonResponse = await response.json();
+        setProjects(jsonResponse.data || []);
       } catch (e: unknown) { // Use unknown for better type safety
         setError((e as Error).message); // Type assertion for error message
       } finally {

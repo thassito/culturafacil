@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import SpaceCard from '../components/SpaceCard';
 
-const API_URL = 'https://api.culturafacil.com.br/api/v1';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
 
 interface Space {
   id: number;
@@ -24,10 +24,8 @@ function SpacesPage() {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const data: Space[] = await response.json(); // Asserting the type here
-        // Assuming spaces might be filtered from opportunities, or opportunities contains space data.
-        // Further refinement may be needed based on actual API response structure for spaces.
-        setSpaces(data); 
+        const jsonResponse = await response.json();
+        setSpaces(jsonResponse.data || []);
       } catch (e: unknown) { // Use unknown for better type safety
         setError((e as Error).message); // Type assertion for error message
       } finally {

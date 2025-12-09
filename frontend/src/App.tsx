@@ -20,6 +20,7 @@ import AdminAgentsPage from './pages/admin/AdminAgentsPage';
 import AdminOpportunitiesPage from './pages/admin/AdminOpportunitiesPage';
 import AdminEventsPage from './pages/admin/AdminEventsPage';
 import AdminProjectsPage from './pages/admin/AdminProjectsPage'; // <--- NEW IMPORT
+import AdminSettingsPage from './pages/admin/AdminSettingsPage';
 
 function App() {
   return (
@@ -62,6 +63,7 @@ function App() {
             <Route path="opportunities" element={<AdminOpportunitiesPage />} />
             <Route path="events" element={<AdminEventsPage />} />
             <Route path="projects" element={<AdminProjectsPage />} /> {/* <--- NEW ROUTE */}
+            <Route path="settings" element={<AdminSettingsPage />} />
             {/* Add other admin sub-routes here in the future */}
           </Route>
         </Routes>

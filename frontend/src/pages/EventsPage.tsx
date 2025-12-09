@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import EventCard from '../components/EventCard';
 
-const API_URL = 'https://api.culturafacil.com.br/api/v1';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
 
 interface Event {
   id: number;
@@ -24,8 +24,8 @@ function EventsPage() {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const data: Event[] = await response.json(); // Asserting the type here
-        setEvents(data);
+        const jsonResponse = await response.json();
+        setEvents(jsonResponse.data || []);
       } catch (e: unknown) { // Use unknown for better type safety
         setError((e as Error).message); // Type assertion for error message
       } finally {

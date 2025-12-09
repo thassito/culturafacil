@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react'; // Added useCallback
 import { useAuth } from '../../context/AuthContext';
 import OpportunityForm from '../../components/admin/OpportunityForm'; // Reusing OpportunityForm
 
-const API_URL = 'https://api.culturafacil.com.br/api/v1';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
 
 // Re-defining Opportunity interface for local clarity, same as in OpportunityForm.tsx
 type OpportunityType = 'editais' | 'chamada_publica' | 'inscricao_continua';
@@ -46,9 +46,9 @@ function AdminProjectsPage() {
       if (!response.ok) {
         throw new Error('Falha ao buscar projetos.');
       }
-      const data = await response.json();
+      const jsonResponse = await response.json();
       // Filter for projects if needed, or assume this endpoint returns only projects
-      setProjects(data); 
+      setProjects(jsonResponse.data || []); 
     } catch (err: unknown) { // Use unknown for better type safety
       setError((err as Error).message); // Type assertion for error message
     } finally {

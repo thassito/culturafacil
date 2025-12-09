@@ -7,7 +7,11 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const { isAuthenticated } = useAuth(); // Usar isAuthenticated
+  const { isAuthenticated, loading } = useAuth(); // Usar isAuthenticated e loading
+
+  if (loading) {
+    return <div className="flex justify-center items-center h-screen">Carregando...</div>; // Ou um spinner componente
+  }
 
   if (!isAuthenticated) { // Verificar se o usuário está autenticado
     // Se não estiver autenticado, redireciona para a página de login do admin

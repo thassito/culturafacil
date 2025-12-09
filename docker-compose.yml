@@ -8,7 +8,7 @@ services:
     environment:
       POSTGRES_DB: culturafacil
       POSTGRES_USER: culturafacil
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-CulturaFacil2025!}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-altere_me_no_env}
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
     ports:
@@ -46,9 +46,9 @@ services:
     restart: always
     environment:
       NODE_ENV: production
-      DATABASE_URL: postgresql://culturafacil:${DB_PASSWORD:-CulturaFacil2025!}@postgres:5432/culturafacil
+      DATABASE_URL: postgresql://culturafacil:${DB_PASSWORD:-altere_me_no_env}@postgres:5432/culturafacil
       REDIS_URL: redis://redis:6379
-      JWT_SECRET: ${JWT_SECRET:-cultura-facil-jwt-secret-2025}
+      JWT_SECRET: ${JWT_SECRET:-altere_me_no_env}
       JWT_EXPIRATION: 86400
       API_PORT: 3000
     ports:

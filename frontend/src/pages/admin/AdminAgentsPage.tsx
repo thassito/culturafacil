@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react'; // Adicionado useCallb
 import { useAuth } from '../../context/AuthContext';
 import AgentForm from '../../components/admin/AgentForm';
 
-const API_URL = 'https://api.culturafacil.com.br/api/v1';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
 
 interface Agent {
   id: string;
@@ -36,8 +36,8 @@ function AdminAgentsPage() {
       if (!response.ok) {
         throw new Error('Falha ao buscar agentes.');
       }
-      const data = await response.json();
-      setAgents(data);
+      const jsonResponse = await response.json();
+      setAgents(jsonResponse.data || []);
     } catch (err: unknown) { // Use unknown for better type safety
       setError((err as Error).message); // Type assertion for error message
     } finally {
@@ -119,7 +119,7 @@ function AdminAgentsPage() {
             {agents.map((agent) => (
               <tr key={agent.id} className="border-t border-gray-200 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/30">
                 <td className="p-4 text-gray-800 dark:text-gray-200">{agent.name}</td>
-                <td className="p-4 text-gray-800 dark:text-gray-200">{agent.user.email}</td>
+                <td className="p-4 text-gray-800 dark:text-gray-200">{agent.user?.email || 'N/A'}</td>
                 <td className="p-4 text-gray-800 dark:text-gray-200">{agent.cpf}</td>
                 <td className="p-4 text-gray-800 dark:text-gray-200">{agent.type}</td>
                 <td className="p-4 text-gray-800 dark:text-gray-200">{agent.isVerified ? 'Sim' : 'Não'}</td>

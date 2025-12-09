@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import OpportunityCard from '../components/OpportunityCard';
 
-const API_URL = 'https://api.culturafacil.com.br/api/v1';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
 
 interface Opportunity {
   id: number;
@@ -22,8 +22,8 @@ function OpportunitiesPage() {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const data: Opportunity[] = await response.json(); // Asserting the type here
-        setOpportunities(data);
+        const jsonResponse = await response.json();
+        setOpportunities(jsonResponse.data || []);
       } catch (e: unknown) { // Use unknown for better type safety
         setError((e as Error).message); // Type assertion for error message
       } finally {

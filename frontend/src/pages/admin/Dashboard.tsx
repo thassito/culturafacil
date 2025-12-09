@@ -3,7 +3,7 @@ import { Cog6ToothIcon, HomeIcon, PlusCircleIcon, ChartBarIcon, UserGroupIcon, C
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 
-const API_URL = 'https://api.culturafacil.com.br/api/v1';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
 
 interface DashboardStats {
   totalAgents: string;
@@ -64,19 +64,25 @@ function Dashboard() {
           fetch(`${API_URL}/opportunities`, { headers: { 'Authorization': `Bearer ${token}` } }),
         ]);
 
-        const agentsData: Agent[] = await agentsRes.json(); // Explicit any[] for now, could be Agent[]
-        const opportunitiesData: Opportunity[] = await opportunitiesRes.json(); // Explicitly typed
+        const agentsResponse = await agentsRes.json();
+        const opportunitiesResponse = await opportunitiesRes.json();
+
+        const agentsData: Agent[] = agentsResponse.data || [];
+        const opportunitiesData: Opportunity[] = opportunitiesResponse.data || [];
+        
+        // Use pagination total if available, otherwise fallback to data length
+        const totalAgentsCount = agentsResponse.pagination?.total ?? agentsData.length;
+        const totalOpportunitiesCount = opportunitiesResponse.pagination?.total ?? opportunitiesData.length;
 
         if (!agentsRes.ok || !opportunitiesRes.ok) {
           throw new Error('Failed to fetch dashboard stats');
         }
         
-        // Assuming activeEvents and registeredProjects are derived from opportunities
         // For 'Espaços Verificados', we don't have an endpoint yet, so keeping placeholder
         setStats({
-          totalAgents: (agentsData?.length || 0).toLocaleString(),
-          activeEvents: (opportunitiesData?.filter((op: Opportunity) => op.status === 'published' && new Date(op.registrationTo) > new Date()).length || 0).toLocaleString(), // Typed op
-          registeredProjects: (opportunitiesData?.length || 0).toLocaleString(), // Assuming all opportunities are projects for now
+          totalAgents: totalAgentsCount.toLocaleString(),
+          activeEvents: (opportunitiesData.filter((op: Opportunity) => op.status === 'published' && new Date(op.registrationTo) > new Date()).length || 0).toLocaleString(), 
+          registeredProjects: totalOpportunitiesCount.toLocaleString(), 
           verifiedSpaces: 'N/A', // Placeholder
         });
 

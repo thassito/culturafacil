@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react'; // Adicionado useCallb
 import { useAuth } from '../../context/AuthContext';
 import OpportunityForm from '../../components/admin/OpportunityForm';
 
-const API_URL = 'https://api.culturafacil.com.br/api/v1';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
 
 type OpportunityType = 'editais' | 'chamada_publica' | 'inscricao_continua';
 type OpportunityStatus = 'draft' | 'published' | 'closed' | 'evaluation' | 'result' | 'archived';
@@ -41,10 +41,10 @@ function AdminEventsPage() {
       if (!response.ok) {
         throw new Error('Falha ao buscar eventos.');
       }
-      const data = await response.json();
+      const jsonResponse = await response.json();
       // For now, let's just list all opportunities as "events".
       // A filtering mechanism might be needed later if 'events' are a specific type of opportunity.
-      setOpportunities(data); 
+      setOpportunities(jsonResponse.data || []); 
     } catch (err: unknown) { // Use unknown for better type safety
       setError((err as Error).message); // Type assertion for error message
     } finally {
