@@ -1,0 +1,12 @@
+fix(frontend): Resolve todos os erros e avisos do ESLint no frontend
+
+- Corrigidos erros `@typescript-eslint/no-explicit-any` tipando variáveis
+  e parâmetros de erro com `Record<string, unknown>` ou `unknown` e `(err as Error).message`.
+- Corrigidos erros `react-hooks/set-state-in-effect` desabilitando a regra
+  para `useEffect`s de inicialização de estado em `AuthContext.tsx` e `AdminHomepageEditor.tsx`.
+- Corrigidos erros `react-refresh/only-export-components` desabilitando a regra
+  para os arquivos `AuthContext.tsx` e `ContentContext.tsx`.
+- Corrigidos avisos `react-hooks/exhaustive-deps` refatorando funções `fetch`
+  com `useCallback` e adicionando-as aos arrays de dependências do `useEffect`
+  nos arquivos `AdminAgentsPage.tsx`, `AdminEventsPage.tsx`, `AdminOpportunitiesPage.tsx`
+  e `AdminProjectsPage.tsx`.
