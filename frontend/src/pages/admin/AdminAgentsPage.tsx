@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'; // Removed React import
+import { useEffect, useState, useCallback } from 'react'; // Adicionado useCallback
 import { useAuth } from '../../context/AuthContext';
 import AgentForm from '../../components/admin/AgentForm';
 
@@ -25,7 +25,7 @@ function AdminAgentsPage() {
   const [showFormModal, setShowFormModal] = useState<boolean>(false); // Explicit boolean type
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null); // Agent to edit, or null for new
 
-  const fetchAgents = async () => {
+  const fetchAgents = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`${API_URL}/agents`, {
@@ -43,13 +43,13 @@ function AdminAgentsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     if (token) {
       fetchAgents();
     }
-  }, [token]);
+  }, [token, fetchAgents]);
 
   const handleAddAgent = () => {
     setSelectedAgent(null);

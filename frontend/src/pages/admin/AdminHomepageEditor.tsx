@@ -84,7 +84,7 @@ function AdminHomepageEditor() {
       setHeroState(content.hero);
       setFeaturesState(content.features);
     }
-  }, [content]);
+  }, [content]); // eslint-disable-line react-hooks/set-state-in-effect
 
   const handleFeatureChange = (index: number, field: keyof FeatureItem, value: string) => { // Typed parameters
     const updatedFeatures = [...featuresState.features];

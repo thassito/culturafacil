@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'; // Removed React import
+import { useEffect, useState, useCallback } from 'react'; // Adicionado useCallback
 import { useAuth } from '../../context/AuthContext';
 import OpportunityForm from '../../components/admin/OpportunityForm';
 
@@ -18,7 +18,7 @@ interface Opportunity {
   resultAnnouncedAt: string;
   maxRegistrations: number;
   budget: number;
-  formSchema: any; // Object
+  formSchema: Record<string, unknown>; // Object
 }
 
 function AdminEventsPage() {
@@ -30,7 +30,7 @@ function AdminEventsPage() {
   const [selectedOpportunity, setSelectedOpportunity] = useState<Opportunity | null>(null); // Opportunity to edit, or null for new
 
 
-  const fetchOpportunities = async () => {
+  const fetchOpportunities = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`${API_URL}/opportunities`, {
@@ -50,13 +50,13 @@ function AdminEventsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]); // token é a dependência de fetchOpportunities
 
   useEffect(() => {
     if (token) {
       fetchOpportunities();
     }
-  }, [token]);
+  }, [token, fetchOpportunities]); // Adicionar fetchOpportunities ao array de dependências
 
   const handleAddOpportunity = () => {
     setSelectedOpportunity(null);
@@ -95,6 +95,7 @@ function AdminEventsPage() {
   const handleFormCancel = () => {
     setShowFormModal(false);
   };
+
 
   if (loading) return <div>Carregando eventos...</div>;
   if (error) return <div className="text-red-500">Erro: {error}</div>;

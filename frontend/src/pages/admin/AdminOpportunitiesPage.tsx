@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'; // Removed React import
+import { useEffect, useState, useCallback } from 'react'; // Adicionado useCallback
 import { useAuth } from '../../context/AuthContext';
 import OpportunityForm from '../../components/admin/OpportunityForm';
 
@@ -18,7 +18,7 @@ interface Opportunity {
   resultAnnouncedAt: string;
   maxRegistrations: number;
   budget: number;
-  formSchema: any; // Object
+  formSchema: Record<string, unknown>; // Object
 }
 
 function AdminOpportunitiesPage() {
@@ -29,7 +29,7 @@ function AdminOpportunitiesPage() {
   const [showFormModal, setShowFormModal] = useState<boolean>(false); // Explicit boolean type
   const [selectedOpportunity, setSelectedOpportunity] = useState<Opportunity | null>(null); // Opportunity to edit, or null for new
 
-  const fetchOpportunities = async () => {
+  const fetchOpportunities = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`${API_URL}/opportunities`, {
@@ -47,13 +47,13 @@ function AdminOpportunitiesPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     if (token) {
       fetchOpportunities();
     }
-  }, [token]);
+  }, [token, fetchOpportunities]);
 
   const handleAddOpportunity = () => {
     setSelectedOpportunity(null);

@@ -21,9 +21,8 @@ function LoginPage() {
       // Chama a função de login do contexto com as credenciais
       await login(email, password);
       navigate('/painel'); // Redireciona para o painel do agente em caso de sucesso
-    } catch (err: any) {
-      // Captura o erro e define a mensagem de erro
-      setError(err.message || 'Ocorreu um erro desconhecido.');
+    } catch (err: unknown) {
+      setError((err as Error).message || 'Ocorreu um erro desconhecido.');
     } finally {
       setLoading(false); // Desativa o estado de carregamento
     }

@@ -32,9 +32,8 @@ function SignupPage() {
       await signup(email, password, fullName, cpf);
       alert('Cadastro realizado com sucesso! Você será redirecionado para a página de login.');
       navigate('/login'); // Redireciona para a página de login após o sucesso
-    } catch (err: any) {
-      // Captura o erro e define a mensagem de erro
-      setError(err.message || 'Ocorreu um erro desconhecido.');
+    } catch (err: unknown) {
+      setError((err as Error).message || 'Ocorreu um erro desconhecido.');
     } finally {
       setLoading(false);
     }

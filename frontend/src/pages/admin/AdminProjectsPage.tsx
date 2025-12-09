@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'; // Removed React import
+import { useEffect, useState, useCallback } from 'react'; // Added useCallback
 import { useAuth } from '../../context/AuthContext';
 import OpportunityForm from '../../components/admin/OpportunityForm'; // Reusing OpportunityForm
 
@@ -19,7 +19,7 @@ interface Opportunity {
   resultAnnouncedAt: string;
   maxRegistrations: number;
   budget: number;
-  formSchema: any; // Object
+  formSchema: Record<string, unknown>; // Object
 }
 
 // Alias Opportunity as Project for semantic clarity in AdminProjectsPage
@@ -33,7 +33,7 @@ function AdminProjectsPage() {
   const [showFormModal, setShowFormModal] = useState<boolean>(false); // Explicit boolean type
   const [selectedProject, setSelectedProject] = useState<Project | null>(null); // Project (opportunity) to edit, or null for new
 
-  const fetchProjects = async () => {
+  const fetchProjects = useCallback(async () => {
     try {
       setLoading(true);
       // For now, let's assume projects are also fetched from opportunities endpoint
@@ -54,13 +54,13 @@ function AdminProjectsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     if (token) {
       fetchProjects();
     }
-  }, [token]);
+  }, [token, fetchProjects]);
 
   const handleAddProject = () => {
     setSelectedProject(null);

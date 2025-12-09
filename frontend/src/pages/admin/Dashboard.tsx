@@ -21,6 +21,12 @@ interface Opportunity { // Reusing Opportunity interface from previous files
   registrationTo: string;
 }
 
+interface Agent {
+  id: string;
+  name: string;
+  // Adicione outras propriedades de Agente se souber quais são
+}
+
 const StatCard = ({ title, value, icon: Icon }: { title: string, value: string | number, icon: React.ElementType }) => (
   <div className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-md p-6 rounded-lg border border-gray-200 dark:border-gray-700/50 flex items-center space-x-4">
     <div className="bg-blue-500/10 p-3 rounded-full">
@@ -58,7 +64,7 @@ function Dashboard() {
           fetch(`${API_URL}/opportunities`, { headers: { 'Authorization': `Bearer ${token}` } }),
         ]);
 
-        const agentsData: any[] = await agentsRes.json(); // Explicit any[] for now, could be Agent[]
+        const agentsData: Agent[] = await agentsRes.json(); // Explicit any[] for now, could be Agent[]
         const opportunitiesData: Opportunity[] = await opportunitiesRes.json(); // Explicitly typed
 
         if (!agentsRes.ok || !opportunitiesRes.ok) {

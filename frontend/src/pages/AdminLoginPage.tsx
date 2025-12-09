@@ -22,9 +22,8 @@ function AdminLoginPage() {
       await login(email, password);
       // Redireciona para a área administrativa após o login bem-sucedido
       navigate('/admin'); 
-    } catch (err: any) {
-      // Captura o erro e define a mensagem de erro
-      setError(err.message || 'Ocorreu um erro desconhecido.');
+    } catch (err: unknown) {
+      setError((err as Error).message || 'Ocorreu um erro desconhecido.');
     } finally {
       setLoading(false); // Desativa o estado de carregamento
     }

@@ -30,7 +30,7 @@ interface Opportunity {
   resultAnnouncedAt: string;
   maxRegistrations: number;
   budget: number;
-  formSchema: any; // Object
+  formSchema: Record<string, unknown>; // Object
 }
 
 interface OpportunityFormProps {
