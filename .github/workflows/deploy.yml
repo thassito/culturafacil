@@ -21,11 +21,15 @@ jobs:
           # cache: 'npm'
       
       - name: Install Backend Dependencies
-        run: npm ci
+        run: |
+          ls -l
+          npm ci
       
       - name: Install Frontend Dependencies
         working-directory: ./frontend
-        run: npm ci --legacy-peer-deps
+        run: |
+          ls -l
+          npm ci --legacy-peer-deps
       
       - name: Build Backend
         working-directory: ./apps
