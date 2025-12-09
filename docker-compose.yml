@@ -54,7 +54,8 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - postgres # Alterado: removida a condição service_healthy
+      postgres:
+        condition: service_started
       redis:
         condition: service_healthy
     networks:
