@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import EventCard from '../components/EventCard';
 
+const API_URL = 'https://api.culturafacil.com.br/api/v1';
+
 interface Event {
   id: number;
   name: string;
@@ -18,7 +20,7 @@ function EventsPage() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch('https://api.culturafacil.com.br/opportunities');
+        const response = await fetch(`${API_URL}/opportunities`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

@@ -2,6 +2,8 @@
 import { useEffect, useState } from 'react';
 import ProjectCard from '../components/ProjectCard';
 
+const API_URL = 'https://api.culturafacil.com.br/api/v1';
+
 interface Project {
   id: number;
   name: string;
@@ -18,7 +20,7 @@ function ProjectsPage() {
     const fetchProjects = async () => {
       try {
         // NOTE: Currently fetching from /opportunities. A dedicated /projects endpoint might be needed.
-        const response = await fetch('https://api.culturafacil.com.br/opportunities'); 
+        const response = await fetch(`${API_URL}/opportunities`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

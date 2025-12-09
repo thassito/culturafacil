@@ -22,7 +22,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // URL da API - usa a variável de ambiente do Vite ou um fallback
-const API_URL = import.meta.env.VITE_API_URL || 'https://api.culturafacil.com.br/api/v1';
+const API_URL = 'https://api.culturafacil.com.br/api/v1';
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);

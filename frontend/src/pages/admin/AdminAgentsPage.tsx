@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'; // Removed React import
 import { useAuth } from '../../context/AuthContext';
 import AgentForm from '../../components/admin/AgentForm';
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://api.culturafacil.com.br/api/v1';
+const API_URL = 'https://api.culturafacil.com.br/api/v1';
 
 interface Agent {
   id: string;

@@ -2,6 +2,8 @@
 import { useEffect, useState } from 'react';
 import AgentCard from '../components/AgentCard';
 
+const API_URL = 'https://api.culturafacil.com.br/api/v1';
+
 interface Agent {
   id: number;
   name: string;
@@ -17,7 +19,7 @@ function AgentsPage() {
   useEffect(() => {
     const fetchAgents = async () => {
       try {
-        const response = await fetch('https://api.culturafacil.com.br/agents');
+        const response = await fetch(`${API_URL}/agents`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

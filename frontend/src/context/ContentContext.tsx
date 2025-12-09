@@ -32,7 +32,7 @@ interface ContentContextType {
 
 const ContentContext = createContext<ContentContextType | undefined>(undefined);
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://api.culturafacil.com.br/api/v1';
+const API_URL = 'https://api.culturafacil.com.br/api/v1';
 
 // Initial state, to be used if no content is found in the backend
 const initialPageContent: PageContent = {

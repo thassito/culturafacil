@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'; // Removed React import
 import { useAuth } from '../../context/AuthContext';
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://api.culturafacil.com.br/api/v1';
+const API_URL = 'https://api.culturafacil.com.br/api/v1';
 
 interface AgentFormData {
   name: string;

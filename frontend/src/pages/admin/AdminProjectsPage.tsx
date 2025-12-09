@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'; // Removed React import
 import { useAuth } from '../../context/AuthContext';
 import OpportunityForm from '../../components/admin/OpportunityForm'; // Reusing OpportunityForm
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://api.culturafacil.com.br/api/v1';
+const API_URL = 'https://api.culturafacil.com.br/api/v1';
 
 // Re-defining Opportunity interface for local clarity, same as in OpportunityForm.tsx
 type OpportunityType = 'editais' | 'chamada_publica' | 'inscricao_continua';

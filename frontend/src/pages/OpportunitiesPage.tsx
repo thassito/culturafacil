@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import OpportunityCard from '../components/OpportunityCard';
 
+const API_URL = 'https://api.culturafacil.com.br/api/v1';
+
 interface Opportunity {
   id: number;
   name: string;
@@ -16,7 +18,7 @@ function OpportunitiesPage() {
   useEffect(() => {
     const fetchOpportunities = async () => {
       try {
-        const response = await fetch('https://api.culturafacil.com.br/opportunities');
+        const response = await fetch(`${API_URL}/opportunities`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

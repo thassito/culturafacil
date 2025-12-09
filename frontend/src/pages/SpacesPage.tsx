@@ -2,6 +2,8 @@
 import { useEffect, useState } from 'react';
 import SpaceCard from '../components/SpaceCard';
 
+const API_URL = 'https://api.culturafacil.com.br/api/v1';
+
 interface Space {
   id: number;
   name: string;
@@ -18,7 +20,7 @@ function SpacesPage() {
     const fetchSpaces = async () => {
       try {
         // NOTE: Currently fetching from /opportunities. A dedicated /spaces endpoint might be needed.
-        const response = await fetch('https://api.culturafacil.com.br/opportunities'); 
+        const response = await fetch(`${API_URL}/opportunities`); 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

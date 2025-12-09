@@ -3,7 +3,7 @@ import { Cog6ToothIcon, HomeIcon, PlusCircleIcon, ChartBarIcon, UserGroupIcon, C
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://api.culturafacil.com.br/api/v1';
+const API_URL = 'https://api.culturafacil.com.br/api/v1';
 
 interface DashboardStats {
   totalAgents: string;
@@ -68,9 +68,9 @@ function Dashboard() {
         // Assuming activeEvents and registeredProjects are derived from opportunities
         // For 'Espaços Verificados', we don't have an endpoint yet, so keeping placeholder
         setStats({
-          totalAgents: agentsData.length.toLocaleString(),
-          activeEvents: opportunitiesData.filter((op: Opportunity) => op.status === 'published' && new Date(op.registrationTo) > new Date()).length.toLocaleString(), // Typed op
-          registeredProjects: opportunitiesData.length.toLocaleString(), // Assuming all opportunities are projects for now
+          totalAgents: (agentsData?.length || 0).toLocaleString(),
+          activeEvents: (opportunitiesData?.filter((op: Opportunity) => op.status === 'published' && new Date(op.registrationTo) > new Date()).length || 0).toLocaleString(), // Typed op
+          registeredProjects: (opportunitiesData?.length || 0).toLocaleString(), // Assuming all opportunities are projects for now
           verifiedSpaces: 'N/A', // Placeholder
         });
 
